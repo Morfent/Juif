@@ -1,0 +1,25 @@
+{
+  "name": "Juif",
+  "version": "0.0.1",
+  "description": "Un bot pour Pokemon Showdown",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js USERNAME PASSWORD"
+  },
+  "dependencies": {
+    "websocket": "~1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kebabier/Juif.git"
+  },
+  "keywords": [
+    "juif"
+  ],
+  "author": "Keb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kebabier/Juif/issues"
+  },
+  "homepage": "https://github.com/Kebabier/Juif"
+}
