@@ -14,7 +14,9 @@ var server = 'sim.smogon.com',
 var username = process.argv[2].toLowerCase().replace(/[^a-z0-9]/g, ''),
     pw = process.argv[3];
 
-function send_datas(conn, d) {
+global.Parser = require('./parser.js').Parser;
+Parser.sayok();
+global.send_datas = function (conn, d) {
     if (conn.connected) {
         d = JSON.stringify(d);
         conn.send(d);
@@ -98,6 +100,7 @@ ws.on('connect', function(conn) {
                         send_datas(conn, '|/join ' + rooms[i]);
                     }
                 }
+                Parser.parser(conn, data);
             }
         }
     });
