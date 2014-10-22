@@ -107,7 +107,18 @@ ws.on('connect', function(conn) {
                         send_datas(conn, '|/join ' + rooms[i]);
                     }
                 }
-                Parser.parser(conn, data);
+                //Prêt à être balancé dans le parser ?
+                if (res.type == 'utf8') {
+                    //On vérifie que notre bousin est un tableau
+                    if (data instanceof Array) {
+                        //OK
+                        for (var i = 0; i < data.length; i++) {
+                            Parser.parser(conn, data[i]);
+                        }
+                    } else {
+                        Parser.parser(conn, data);
+                    }
+                }
             }
         }
     });
