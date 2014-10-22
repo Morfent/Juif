@@ -1,28 +1,36 @@
-﻿/*
+/*
  * Juif, un bot Pokemon Showdown
+ * Fichier principal
  */
 var wsclient = require('websocket').client,
     sys = require('sys'),
     https = require('https');
 
-//Config:
 //Informations de connexion au serveur.
 var server = 'sim.smogon.com',
     port = 8000,
     rooms = ['lobby', 'franais'];
 
-var username = process.argv[2].toLowerCase().replace(/[^a-z0-9]/g, ''),
-    pw = process.argv[3];
+if (!process.argv[2]) {
+    console.log('Veuillez spécifier un nom d\'utilisateur.');
+    process.exit(-1)
+}
 
 global.Parser = require('./parser.js').Parser;
-Parser.sayok();
-global.send_datas = function (conn, d) {
+
+global.send_datas = function(conn, d) {
     if (conn.connected) {
         d = JSON.stringify(d);
         conn.send(d);
     }
 };
 
+global.toId = function(d) {
+    return d.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+var username = toId(process.argv[2]),
+    pw = process.argv[3];
 /*
  * Cette fonction ne retourne pas les éventuelles erreurs
  * qui peuvent survenir (mauvais id/pass par exemple).
@@ -87,7 +95,6 @@ ws.on('connect', function(conn) {
                 }
                 if (data[1] == 'updateuser') {
                     //Pas de vérification des information de connexion pour le moment. Deal w/ it.
-                    //On check si tout se passe bien
                     if (data[2] !== username) return;
                     if (data[3] !== '1') {
                         console.log('Echec de la connexion.')
