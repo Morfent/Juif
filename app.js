@@ -9,7 +9,7 @@ var wsclient = require('websocket').client,
 //Informations de connexion au serveur.
 var server = 'sim.smogon.com',
     port = 8000,
-    rooms = ['lobby', 'franais'];
+    rooms = ['franais'];
 
 if (!process.argv[2]) {
     console.log('Veuillez spécifier un nom d\'utilisateur.');
@@ -89,36 +89,26 @@ ws.on('connect', function(conn) {
         if (res.type === 'utf8') {
             if (res.utf8Data.charAt(0) === 'a') {
                 var data = JSON.parse(res.utf8Data.substr(1))[0];
-                data = data.split('|');
-                if (data[1] == 'challstr') {
-                    login(username, pw, data[2], data[3], conn);
+                tempdata = data.split('|');
+                if (tempdata[1] == 'challstr') {
+                    login(username, pw, tempdata[2], tempdata[3], conn);
                 }
-                if (data[1] == 'updateuser') {
+                if (tempdata[1] == 'updateuser') {
                     //Pas de vérification des information de connexion pour le moment. Deal w/ it.
-                    if (data[2] !== username) return;
-                    if (data[3] !== '1') {
+                    if (tempdata[2] !== username) return;
+                    if (tempdata[3] !== '1') {
                         console.log('Echec de la connexion.')
                         process.exit(-1);
                     }
                     //Tout est ok
                     console.log('Connecté en tant que ' + username);
                     //On rejoint les rooms
-                    for (var i = 0; i <= rooms.length; i++) {
+                    for (var i = 0; i < rooms.length; i++) {
                         send_datas(conn, '|/join ' + rooms[i]);
                     }
+
                 }
-                //Prêt à être balancé dans le parser ?
-                if (res.type == 'utf8') {
-                    //On vérifie que notre bousin est un tableau
-                    if (data instanceof Array) {
-                        //OK
-                        for (var i = 0; i < data.length; i++) {
-                            Parser.parser(conn, data[i]);
-                        }
-                    } else {
-                        Parser.parser(conn, data);
-                    }
-                }
+                Parser.parser(conn, data);
             }
         }
     });
