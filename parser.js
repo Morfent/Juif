@@ -9,10 +9,10 @@ exports.Parser = {
         if (data.indexOf('\n') > -1) {
             var spl = data.split('\n');
             for (var i = 0; i < spl.length; i++) {
-                /*if (spl[i].split('|')[1] && (spl[i].split('|')[1] === 'init' || spl[i].split('|')[1] === 'tournament')) {
-					this.room = '';
-					break;
-				}*/
+                if (spl[i].split('|')[1] && (spl[i].split('|')[1] === 'init' || spl[i].split('|')[1] === 'tournament')) {
+			this.room = '';
+			break;
+		}
                 this.parser(c, spl[i]);
             }
             return;
