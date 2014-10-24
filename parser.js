@@ -1,6 +1,7 @@
 /*
  * Parser.js
  * Ce fichier sert à traiter les données reçues
+ *
  */
 exports.Parser = {
     room: '', // La room où se passe l'action, acualisée en permanence
@@ -10,31 +11,38 @@ exports.Parser = {
             var spl = data.split('\n');
             for (var i = 0; i < spl.length; i++) {
                 if (spl[i].split('|')[1] && (spl[i].split('|')[1] === 'init' || spl[i].split('|')[1] === 'tournament')) {
-			this.room = '';
-			break;
-		}
+                    this.room = '';
+                    break;
+                }
                 this.parser(c, spl[i]);
             }
             return;
         }
-        var spl = data.split('|');
-        if (!spl[1]) {
-            spl = data.split('>');
-            if (!spl[1])
+        var t = data.split('|');
+        if (!t[1]) {
+            t = data.split('>');
+            if (!t[1])
                 return;
-            this.room = spl[1];
+            this.room = t[1];
         }
-        switch (spl[1]) {
+        switch (t[1]) {
+            //Ce qui se passe sur la room
             case 'c:':
-                console.log('(Room ' + this.room + ') ' + spl[3] + ': ' + spl[4]);
+                console.log('(Room ' + this.room + ') ' + t[3] + ': ' + t[4]);
+                this.parsechat(c, t[3], this.room, t[4]);
                 break;
+                //Ce qui se passe en PM
             case 'pm':
-                console.log('pm reçu !');
-                this.talk();
+                console.log('(Room PM) ' + t[3] + ': ' + t[4]);
                 break;
         }
     },
-    talk: function(c, from, room, msg) {
-       //Censé envoyer un message
+    //Message ou commande ?
+    parsechat: function(c, msg, from, room) {
+
+    },
+    talk: function(c, room, msg) {
+        var txt = room + '|' + msg;
+        send_datas(c, txt);
     }
 };
