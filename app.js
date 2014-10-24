@@ -1,7 +1,6 @@
-/*
- * Juif, un bot Pokemon Showdown
- * Fichier principal
- */
+*
+* Juif, un bot Pokemon Showdown
+    * Fichier principal * /
 var wsclient = require('websocket').client,
     sys = require('sys'),
     https = require('https');
@@ -9,7 +8,8 @@ var wsclient = require('websocket').client,
 //Informations de connexion au serveur.
 var server = 'sim.smogon.com',
     port = 8000,
-    rooms = ['franais'];
+    rooms = ['art'],
+    comchar = '!';
 
 if (!process.argv[2]) {
     console.log('Veuillez spécifier un nom d\'utilisateur.');
@@ -17,6 +17,7 @@ if (!process.argv[2]) {
 }
 
 global.Parser = require('./parser.js').Parser;
+global.Cmd = require('./commands.js').Cmd;
 
 global.send_datas = function(conn, d) {
     if (conn.connected) {
