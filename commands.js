@@ -1,6 +1,6 @@
 /*
  *  commands.js
- *  Toutes (ou presques) les commandes du bot
+ *  Toutes (ou presque) les commandes du bot
  *  doivent se trouver ici.
  *  Doc:
  *  Pour une commande de type:
