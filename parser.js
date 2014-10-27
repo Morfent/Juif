@@ -1,8 +1,14 @@
 /*
  * Parser.js
  * Ce fichier sert à traiter les données reçues
+ * Doc:
+ * ** Faire parler le bot **
+ *    this.talk(c, ROOM DÉSIRÉE, MESSAGE);
+ *    --------------
+ * ** Vérifier le grade d'un utilisateur: **
+ *    this.isRanked(USER, GRADE MINIMUM REQUIS);
+ *    Remarque: retourne 'true' ou 'false'
  */
- 
 exports.Parser = {
     room: '', // La room où se passe l'action, acualisée en permanence
     parser: function(c, data) {
@@ -61,8 +67,6 @@ exports.Parser = {
         }
     },
     talk: function(c, room, msg) {
-        // Le format de la 'room' du PM est comme ceci:
-        // room = #utilisateur
         if (room.charAt(0) == '#') {
             var to = room.substr(1);
             var txt = '|/pm ' + to + ', ' + msg;
@@ -70,6 +74,35 @@ exports.Parser = {
         } else {
             var txt = room + '|' + msg;
             send_datas(c, txt);
+        }
+    },
+    isRanked: function(user, required) {
+        var groups = {
+            '~': {
+                rank: 5
+            },
+            '&': {
+                rank: 4
+            },
+            '#': {
+                rank: 3
+            },
+            '@': {
+                rank: 2
+            },
+            '%': {
+                rank: 1
+            },
+            '+': {
+                rank: 0
+            }
+        };
+        var rank = user.charAt(0);
+        if (!groups[rank]) return false;
+        if (groups[rank].rank >= groups[required].rank) {
+            return true;
+        } else {
+            return false;
         }
     }
 };
