@@ -1,6 +1,5 @@
 /*
  * Juif, un bot Pokemon Showdown
- * app.js
  * Fichier principal
  */
 var wsclient = require('websocket').client,
@@ -13,11 +12,11 @@ var wsclient = require('websocket').client,
 //informations sur le serveur
 var server = 'sim.smogon.com',
     port = 8000,
-    rooms = ['mafia'];
+    rooms = ['franais'];
 //Caractère servant à appeler une commande
 global.comchar = '!';
 //Réponses automatiques
-global.autoR = false;
+global.autoR = true;
 
 if (!process.argv[2]) {
     console.log('Veuillez spécifier un nom d\'utilisateur.');
@@ -26,6 +25,7 @@ if (!process.argv[2]) {
 
 global.Parser = require('./parser.js').Parser;
 global.Cmd = require('./commands.js').Cmd;
+global.Banlist = require('./data/banlist.js').Banlist;
 
 global.send_datas = function(conn, d) {
     if (conn.connected) {
@@ -40,6 +40,9 @@ global.makeId = function(d) {
 
 var username = makeId(process.argv[2]),
     pw = process.argv[3];
+
+global.botName = username;
+
 /*
  * Cette fonction ne retourne pas les éventuelles erreurs
  * qui peuvent survenir (mauvais id/pass par exemple).
