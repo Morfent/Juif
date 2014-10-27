@@ -9,6 +9,8 @@
  *    this.isRanked(USER, GRADE MINIMUM REQUIS);
  *    Remarque: retourne 'true' ou 'false'
  */
+var fs = require('fs');
+
 exports.Parser = {
     room: '', // La room où se passe l'action, acualisée en permanence
     parser: function(c, data) {
@@ -37,20 +39,25 @@ exports.Parser = {
             case 'c:':
                 console.log('(Room ' + this.room + ') ' + t[3] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[3], this.room);
+                this.autoresponses(c, t[4], t[3], this.room);
                 break;
                 //Ce qui se passe en PM
             case 'pm':
                 console.log('(Room PM) ' + t[2] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[2], '#' + t[2]);
+                this.autoresponses(c, t[4], t[2], '#' + t[2]);
                 break;
             case 'J':
-                //Servira pour les !ab
+                console.log(t);
+                //Ban permanant (expérimental)
+                for (var i = 0; i <= Banlist.length; i++) {
+                    //if (Banlist[i])
+                }
                 break;
         }
     },
     //Message ou commande ?
     iscommand: function(c, msg, from, room) {
-        console.log(msg.substr(0, comchar.length));
         if (msg.substr(0, comchar.length) === comchar) {
             //C'est une commande, on vérifie si elle existe
             msg = msg.substr(comchar.length);
@@ -103,6 +110,25 @@ exports.Parser = {
             return true;
         } else {
             return false;
+        }
+    },
+    autoresponses: function(c, msg, from, room) {
+        /*
+         * Créer une instance de réponse aléatoire:
+         * Rechercher le mot que vous souhaitez, exemple 'test':
+         *     if (msg.indexOf('test') > -1) {//Instructions}
+         * Créez votre fichier (exemple test.txt) dans le répertoire /data/
+         * Vous pouvez y mettre une réponse par ligne.
+         * Enfin dans le bloc d'instructions:
+         *     var phrases = fs.readFileSync('data/NOMDUFICHIER.txt').toString().split("\n");
+         *     var random = Math.floor((Math.random() * phrases.length) + 1);
+         *     this.talk(c, room, phrases[random]);
+         */
+        if (!autoR) return false;
+        if (msg.indexOf(botName) > -1) {
+            var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
+            var random = Math.floor((Math.random() * phrases.length) + 1);
+            this.talk(c, room, phrases[random]);
         }
     }
 };
