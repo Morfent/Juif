@@ -16,7 +16,8 @@ var server = 'sim.smogon.com',
     rooms = ['mafia'];
 //Caractère servant à appeler une commande
 global.comchar = '!';
-
+//Réponses automatiques
+global.autoR = false;
 
 if (!process.argv[2]) {
     console.log('Veuillez spécifier un nom d\'utilisateur.');
