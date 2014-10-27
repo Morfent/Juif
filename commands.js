@@ -10,7 +10,6 @@
  *  from: celui qui exécute la commande
  *  room: room où la commande a été lancée
  */
-
 var fs = require('fs');
 
 exports.Cmd = {
@@ -26,6 +25,24 @@ exports.Cmd = {
         } else {
             this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
         }
-
+    },
+    talk: function(c, params, from, room) {
+        if (!this.isRanked(user, '@')) return false;
+        var txt = 'Réponses automatiques ';
+        if (params === 'on') {
+            autoR = true;
+            txt += 'activées.';
+        } else if (params === 'off') {
+            autoR = false;
+            txt += 'désactivées.'
+        } else {
+            txt = 'Une erreur est survenue.'
+        }
+        this.talk(c, room, txt);
+    },
+    ab: function(c, params, from, room) {
+        var opts = params.split(',');
+        Banlist[opts[0]] = opts[1];
+        fs.writeFileSync('data/banlist.js', JSON.stringify(Banlist));
     }
 };
