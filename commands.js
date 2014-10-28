@@ -27,7 +27,7 @@ exports.Cmd = {
         }
     },
     talk: function(c, params, from, room) {
-        if (!this.isRanked(user, '@')) return false;
+        if (!this.isRanked(from, '@')) return false;
         var txt = 'Réponses automatiques ';
         if (params === 'on') {
             autoR = true;
@@ -36,13 +36,20 @@ exports.Cmd = {
             autoR = false;
             txt += 'désactivées.'
         } else {
+            //Précaution
             txt = 'Une erreur est survenue.'
         }
         this.talk(c, room, txt);
     },
     ab: function(c, params, from, room) {
+        if (!this.isRanked(from, '@')) return false;
+        if (!params) return false;
         var opts = params.split(',');
-        Banlist[opts[0]] = opts[1];
-        fs.writeFileSync('data/banlist.js', JSON.stringify(Banlist));
+        if (opts[1].indexOf(',') > 1) return false;
+        var data = makeId(opts[0])+','+room+','+opts[1];
+        var banlist = fs.appendFile('data/banlist.csv', '\n'+data, function (err){
+            console.log(err);
+        });
+        this.talk(c, room, 'Ban permanant pour '+opts[0]+': '+opts[1]);
     }
 };
