@@ -48,11 +48,8 @@ exports.Parser = {
                 this.autoresponses(c, t[4], t[2], '#' + t[2]);
                 break;
             case 'J':
-                console.log(t);
+                //console.log(t);
                 //Ban permanant (expérimental)
-                for (var i = 0; i <= Banlist.length; i++) {
-                    //if (Banlist[i])
-                }
                 break;
         }
     },
@@ -86,22 +83,28 @@ exports.Parser = {
     isRanked: function(user, required) {
         var groups = {
             '~': {
-                rank: 5
+                rank: 5,
+                desc: 'Admin'
             },
             '&': {
-                rank: 4
+                rank: 4,
+                desc: 'Leader'
             },
             '#': {
-                rank: 3
+                rank: 3,
+                desc: 'Room Owner'
             },
             '@': {
-                rank: 2
+                rank: 2,
+                desc: 'Moderator'
             },
             '%': {
-                rank: 1
+                rank: 1,
+                desc: 'Driver'
             },
             '+': {
-                rank: 0
+                rank: 0,
+                desc: 'Voiced'
             }
         };
         var rank = user.charAt(0);
