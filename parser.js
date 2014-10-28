@@ -138,31 +138,32 @@ exports.Parser = {
             this.talk(c, room, phrases[random]);
         }
     },
-    isBanned: function (c, user, room) {
+    isBanned: function(c, user, room) {
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
 
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(user) == spl[0] && room == spl[1]) {
-                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: '+spl[2]);
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
             }
         }
     },
     upToHastebin: function(con, from, room, data) {
-		var self = this;
-		var reqOpts = {
-			hostname: "hastebin.com",
-			method: "POST",
-			path: '/documents'
-		};
+        var self = this;
+        
+        var reqOpts = {
+            hostname: "hastebin.com",
+            method: "POST",
+            path: '/documents'
+        };
 
-		var req = require('http').request(reqOpts, function(res) {
-			res.on('data', function(chunk) {
-				self.say(c, room, (room.charAt(0) === '#' ? "" : "/pm " + from + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
-			});
-		});
+        var req = require('http').request(reqOpts, function(res) {
+            res.on('data', function(chunk) {
+                self.say(c, room, (room.charAt(0) === '#' ? "" : "/pm " + from + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+            });
+        });
 
-		req.write(data);
-		req.end();
-	}
+        req.write(data);
+        req.end();
+    }
 };
