@@ -5,7 +5,7 @@ Vous pouvez ajouter manuellement un utilisateur banni de la façon suivante:
 - Ouvrez le fichier banlist.csv
 - Dans une nouvelle ligne, mettez-y: `UTILISATEUR, ROOM, RAISON`
 
-Phrases supplémentaires dans les réponses auto et 8ball
+Réponses auto et 8ball
 =======================================================
 
 Vous pouvez facilement ajouter de nouvelles phrases en éditant les fichiers respectifs 
