@@ -37,19 +37,19 @@ exports.Parser = {
         switch (t[1]) {
             //Ce qui se passe sur la room
             case 'c:':
-                console.log('(Room ' + this.room + ') ' + t[3] + ': ' + t[4]);
+                console.log('DEBUG: (Room ' + this.room + ') ' + t[3] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[3], this.room);
                 this.autoresponses(c, t[4], t[3], this.room);
                 break;
                 //Ce qui se passe en PM
             case 'pm':
-                console.log('(Room PM) ' + t[2] + ': ' + t[4]);
+                console.log('DEBUG: (Room PM) ' + t[2] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[2], '#' + t[2]);
                 this.autoresponses(c, t[4], t[2], '#' + t[2]);
                 break;
             case 'J':
-                //console.log(t);
-                //Ban permanant (expérimental)
+                //Bannissement permanant (expérimental)
+                this.isBanned(c, t[2], this.room);
                 break;
         }
     },
@@ -132,6 +132,15 @@ exports.Parser = {
             var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
             var random = Math.floor((Math.random() * phrases.length) + 1);
             this.talk(c, room, phrases[random]);
+        }
+    },
+    isBanned: function (c, user, room) {
+        var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
+        for (var i = 0; i < banlist.length; i++) {
+            var spl = banlist[i].toString().split('|');
+            if (makeId(user) == spl[0] && room == spl[1]) {
+                this.talk(c, room, '/rb '+user+', Bannissement permanant: '+spl[2]);
+            }
         }
     }
 };
