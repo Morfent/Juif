@@ -10,6 +10,7 @@
  *  from: celui qui exécute la commande
  *  room: room où la commande a été lancée
  */
+
 var fs = require('fs');
 
 exports.Cmd = {
@@ -20,6 +21,7 @@ exports.Cmd = {
     '8ball': function(c, params, from, room) {
         var phrases = fs.readFileSync('data/8ball.txt').toString().split("\n");
         var random = Math.floor((Math.random() * phrases.length) + 1);
+
         if (this.isRanked(from, '+')) {
             this.talk(c, room, phrases[random]);
         } else {
@@ -41,13 +43,13 @@ exports.Cmd = {
         }
         this.talk(c, room, txt);
     },
-    ab: function(c, params, from, room) {
-        //if (!this.isRanked(from, '@')) return false;
+    ab: function (c, params, from, room) {
+        if (!this.isRanked(from, '@')) return false;
         if (!params) return false;
         var opts = params.split(',');
         if (opts[1].indexOf(',') > 1) return false;
         var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
-        fs.appendFile('data/banlist.txt', '\n' + data, function(err) {
+        fs.appendFile('data/banlist.txt', '\n' + data, function (err){
             console.log(err);
         });
         //On vire les sauts de lignes inutiles
@@ -56,12 +58,14 @@ exports.Cmd = {
         fs.writeFileSync('data/banlist.txt', output);
         this.talk(c, room, 'Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
-    aub: function(c, params, from, room) {
-        //if (!this.isRanked(from, '#')) return false;
+    aub: function (c, params, from, room) {
+        if (!this.isRanked(from, '#')) return false;
         if (!params) return false;
+
         var success = false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
         var editedbanlist = fs.readFileSync('data/banlist.txt').toString();
+
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(params) == spl[0]) {
