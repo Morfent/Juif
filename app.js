@@ -25,7 +25,6 @@ if (!process.argv[2]) {
 
 global.Parser = require('./parser.js').Parser;
 global.Cmd = require('./commands.js').Cmd;
-global.Banlist = require('./data/banlist.js').Banlist;
 
 global.send_datas = function(conn, d) {
     if (conn.connected) {
