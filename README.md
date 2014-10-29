@@ -1,4 +1,4 @@
-Juif Version 2.0 (ou version BG en beta)
+Juif Version 2.0 (beta)
 ===========
 
 Juif est un bot pour [Pokemon Showdown][1]
