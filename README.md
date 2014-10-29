@@ -32,18 +32,18 @@ Il s'agit d'une version beta. Le script est encore loin d'être terminé à 100%
 TODO list
 =========
 
-`!unbanword` : débannir un mot.
-`!fc` : Codes amis
-`!rk` : kick
-`!trad` : noms des pokemons, des moves, des capacités
-`!repeat` : Répéter un message à intervalles réguliers
-`!vdm` : VDM 
-`!bl` : liste des utilisateurs bannis
-`!tb` : ban temporaire
-`!bs` : bescherelle des mongols
-`this.isYtLink()` : reconnaissance des liens youtube
-`this.logpm()` : enregistrement des PMS reçus
-`this.checklink()` : liens interdits (warn = désactivation du lien)
+`!unbanword` : débannir un mot. <br/>
+`!fc` : Codes amis <br/>
+`!rk` : kick <br/>
+`!trad` : noms des pokemons, des moves, des capacités <br/>
+`!repeat` : Répéter un message à intervalles réguliers <br/>
+`!vdm` : VDM <br/>
+`!bl` : liste des utilisateurs bannis <br/>
+`!tb` : ban temporaire <br/>
+`!bs` : bescherelle des mongols <br/>
+`this.isYtLink()` : reconnaissance des liens youtube <br/>
+`this.logpm()` : enregistrement des PMS reçus <br/>
+`this.checklink()` : liens interdits (warn = désactivation du lien) <br/>
 Réponse auto lors des salutations.
 
 
