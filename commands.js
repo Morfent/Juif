@@ -16,14 +16,18 @@ var fs = require('fs');
 exports.Cmd = {
     about: function(c, params, from, room) {
         var txt = 'Bot créé par Keb avec la technologie javascript côté serveur node.js';
-        this.talk(c, room, txt);
+        if (!this.isranked(from, '+')) {
+            this.talk(c, room, txt);
+        } else {
+            this.talk(c, room, '/pm ' + from + ', ' + txt);
+        }
     },
     '8ball': function(c, params, from, room) {
         var phrases = fs.readFileSync('data/8ball.txt').toString().split("\n");
         var random = Math.floor((Math.random() * phrases.length) + 1);
 
         if (this.isRanked(from, '+')) {
-            this.talk(c, room, phrases[random]);
+            this.talk(c, room, '(' + from.substr(1) + ') ' + phrases[random]);
         } else {
             this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
         }
@@ -39,15 +43,13 @@ exports.Cmd = {
             txt += 'désactivées.'
         } else {
             //Précaution
-            txt = 'Une erreur est survenue.'
+            txt = 'Vous devez utiliser le paramètre "on" ou "off".'
         }
         this.talk(c, room, txt);
     },
     ab: function (c, params, from, room) {
-        if (!this.isRanked(from, '@')) return false;
-        if (!params) return false;
+        if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
-        if (opts[1].indexOf(',') > 1) return false;
         var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
         fs.appendFile('data/banlist.txt', '\n' + data, function (err){
             console.log(err);
@@ -59,8 +61,7 @@ exports.Cmd = {
         this.talk(c, room, 'Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
     aub: function (c, params, from, room) {
-        if (!this.isRanked(from, '#')) return false;
-        if (!params) return false;
+        if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
@@ -82,5 +83,11 @@ exports.Cmd = {
             }
         }
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
+    },
+    banword: function (c, params, from, room) {
+        if (!this.isRanked(from, '@') || !params) return false;
+        fs.appendFile('data/bannedwords.txt', '|' + params, function (err){
+            console.log(err);
+        });
     }
 };
