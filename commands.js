@@ -131,7 +131,16 @@ exports.Cmd = {
     },
     
     tb: function (c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+       if (!this.isRanked(from, '#')) return false;
+        var opts = params.split(',');
+        if (!opts[1]) return false;
+        var to = opts[0];
+        var time = opts[1] * 60 * 1000;
+        var self = this;
+        this.talk(c, room, '/rb' + to + ', Ban temporaire de ' + time + ' minutes.');
+        setTimeout(function(){
+            self.talk(c, room, '/roomunban ' + to);
+        }, time);
     },
 
     /*******************************************
