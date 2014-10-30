@@ -145,7 +145,7 @@ exports.Parser = {
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(user) == spl[0] && room == spl[1]) {
-                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: '+spl[2]);
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
             }
         }
     },
@@ -158,7 +158,7 @@ exports.Parser = {
             }
         }
     },
-    upToHastebin: function(con, from, room, data) {
+    upToHastebin: function(c, from, room, data) {
 		var self = this;
 		var reqOpts = {
 			hostname: "hastebin.com",
