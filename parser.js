@@ -141,24 +141,27 @@ exports.Parser = {
     },
     isBanned: function (c, user, room) {
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
-        
+
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(user) == spl[0] && room == spl[1]) {
-                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: '+spl[2]);
             }
         }
     },
-    bannedword: function (c, msg, user, room) {
-        var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('|');
+    bannedwords: function (c, msg, user, room) {
+        var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
         for (var i = 0; i < bannedwords.length; i++) {
-            var index = msg.indexOf(bannedwords[i]);
-            if (index > -1) {
+            var spl = bannedwords[i].toString().split('|');
+            if(!spl) return false;
+            var index = msg.indexOf(spl[0]);
+            if (index > -1 && room == spl[1]) {
+                console.log('DEBUG: ' + spl[0] + ' est un mot banni.');
                 this.talk(c, room, '/mute ' + user + ', Mot banni.');
             }
         }
     },
-    upToHastebin: function(c, from, room, data) {
+    upToHastebin: function(con, from, room, data) {
 		var self = this;
 		var reqOpts = {
 			hostname: "hastebin.com",
