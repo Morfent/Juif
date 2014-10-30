@@ -20,7 +20,7 @@ exports.Cmd = {
      ***********************************/
 
     about: function(c, params, from, room) {
-        var txt = 'Bot créé par Keb avec la technologie javascript côté serveur node.js';
+        var txt = 'Juif est un bot créé par Keb avec la technologie javascript côté serveur node.js. Ce bot est open source: https://github.com/Kebabier/Juif';
         if (!this.isranked(from, '+')) {
             this.talk(c, room, txt);
         } else {
@@ -60,7 +60,7 @@ exports.Cmd = {
         var e = fs.readFileSync('data/banlist.txt').toString();
         var output = e.replace(/^\s*$[\n\r]{1,}/gm, '');
         fs.writeFileSync('data/banlist.txt', output);
-        this.talk(c, room, 'Ban permanant pour ' + opts[0] + ': ' + opts[1]);
+        this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
 
     aub: function (c, params, from, room) {
@@ -80,6 +80,7 @@ exports.Cmd = {
                     //On tej la ligne vide inutile qui fait planter le script
                     var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/banlist.txt', output);
+                    this.talk(c, room, '/roomunban ' + spl[0]);
                     this.talk(c, room, spl[0] + ' a bien été débanni.');
                     success = true;
                 }
@@ -121,15 +122,9 @@ exports.Cmd = {
     },
 
     bl: function (c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+
     },
 
-    rk: function (c, params, from, room) {
-        if (!this.isRanked(from, '#')) return false;
-        this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
-        this.talk(c, room, '/roomunban ' + ', ' + params);
-    },
-    
     tb: function (c, params, from, room) {
        if (!this.isRanked(from, '#')) return false;
         var opts = params.split(',');
@@ -148,6 +143,12 @@ exports.Cmd = {
      *******************************************/
     fc: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    rk: function (c, params, from, room) {
+        if (!this.isRanked(from, '#')) return false;
+        this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
+        this.talk(c, room, '/roomunban ' + ', ' + params);
     },
 
     vdm: function (c, params, from, room) {
