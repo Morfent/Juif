@@ -122,7 +122,7 @@ exports.Cmd = {
     },
 
     bl: function(c, params, from, room) {
-    	if (!this.isRanked(from, '@')) return false;
+        if (!this.isRanked(from, '@')) return false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
         var str = '';
         for (var i = 0; i < banlist.length; i++) {
@@ -187,7 +187,15 @@ exports.Cmd = {
     },
 
     trad: function(c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+        params = makeId(params);
+        if (!this.isRanked(from, '+')) room = '#' + from;
+        if (frToEn.frToEn[params]) {
+            this.talk(c, room, 'Nom du pokemon en anglais: ' + frToEn.frToEn[params]);
+        } else if (enToFr.enToFr[params]) {
+            this.talk(c, room, 'Nom du pokemon en français: ' + enToFr.enToFr[params]);
+        } else {
+            this.talk(c, room, 'Ce pokemon n\'existe pas.');
+        }
     },
 
     '8ball': function(c, params, from, room) {
@@ -199,5 +207,5 @@ exports.Cmd = {
         } else {
             this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
         }
-    },
+    }
 };
