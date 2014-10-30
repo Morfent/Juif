@@ -26,6 +26,11 @@ if (!process.argv[2]) {
 global.Parser = require('./parser.js').Parser;
 global.Cmd = require('./commands.js').Cmd;
 
+//Dex (noms des pokemons)
+//On précharge une bonne fois pour toute
+global.frToEn = require('./data/frtoen.js');
+global.enToFr = require('./data/entofr.js');
+
 global.send_datas = function(conn, d) {
     if (conn.connected) {
         d = JSON.stringify(d);
