@@ -43,6 +43,7 @@ exports.Parser = {
                 this.iscommand(c, t[4], t[3], this.room);
                 this.autoresponses(c, t[4], t[3], this.room);
                 this.bannedwords(c, t[4], t[3], this.room);
+                this.checkYtlink(c, t[4], t[3], this.room);
                 break;
                 //Ce qui se passe en PM
             case 'pm':
@@ -138,22 +139,74 @@ exports.Parser = {
             var random = Math.floor((Math.random() * phrases.length) + 1);
             this.talk(c, room, phrases[random]);
         }
+        //Salutations
+        var words = ['hi', 'salut', 'bonjour', 'yo', 'slt'];
+        if (words.indexOf(msg) > -1) {
+            var phrases = fs.readFileSync('data/autohello.txt').toString().split("\n");
+            var random = Math.floor((Math.random() * phrases.length) + 1);
+            //Probabilité de 1/3 pour une réponse
+            var p = Math.floor((Math.random() * 3 + 1));
+            //Si l'utilisateur a un garde, on l'enlève du nom
+            if (this.isRanked(from, '+')) from = from.substr(1);
+            if (p == 1) this.talk(c, room, phrases[random] + ' ' + from);
+        }
     },
-    isBanned: function (c, user, room) {
+    checkYtlink: function(c, msg, from, room) {
+        var spl = msg.split(' ');
+        var id = null;
+        //Extraction de l'id de la vidéo depuis un message
+        for (var i = 0; i < spl.length; i++) {
+            var search = spl[i].indexOf('youtube.com/watch?v=');
+            if (search > -1) {
+                id = spl[i].split('=')[1];
+                if (id.length != 11) {
+                    id = spl[i].substring(spl[i].lastIndexOf("v=") + 1, spl[i].lastIndexOf("&list")).substr(1);
+                }
+            } else {
+                return false;
+            }
+        }
+        //On va chercher les infos de la vidéo
+        var reqOpts = {
+            hostname: "gdata.youtube.com",
+            method: "GET",
+            path: '/feeds/api/videos/' + id + '?alt=json',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        var self = this;
+        var data = '';
+        // Si l'extraction de l'id foire, on arrête la fonction
+        // plutôt que de faire crasher le bot
+        if (id.length != 11) return false;
+        var req = require('http').request(reqOpts, function(res) {
+            res.on('data', function(chunk) {
+                data += chunk;
+            });
+            res.on('end', function(chunk) {
+                var obj = JSON.parse(data);
+                if (self.isRanked(from, '+')) from = from.substr(1);
+                self.talk(c, room, 'Video postée par ' + from + ': ' + '**' + obj.entry.title.$t + '**');
+            });
+        });
+        req.end();
+    },
+    isBanned: function(c, user, room) {
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
 
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(user) == spl[0] && room == spl[1]) {
-                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: '+spl[2]);
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
             }
         }
     },
-    bannedwords: function (c, msg, user, room) {
+    bannedwords: function(c, msg, user, room) {
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
         for (var i = 0; i < bannedwords.length; i++) {
             var spl = bannedwords[i].toString().split('|');
-            if(!spl) return false;
+            if (!spl) return false;
             var index = msg.indexOf(spl[0]);
             if (index > -1 && room == spl[1]) {
                 console.log('DEBUG: ' + spl[0] + ' est un mot banni.');
@@ -162,20 +215,20 @@ exports.Parser = {
         }
     },
     upToHastebin: function(c, from, room, data) {
-		var self = this;
-		var reqOpts = {
-			hostname: "hastebin.com",
-			method: "POST",
-			path: '/documents'
-		};
+        var self = this;
+        var reqOpts = {
+            hostname: "hastebin.com",
+            method: "POST",
+            path: '/documents'
+        };
 
-		var req = require('http').request(reqOpts, function(res) {
-			res.on('data', function(chunk) {
-				self.say(c, room, (room.charAt(0) === '#' ? "" : "/pm " + from + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
-			});
-		});
+        var req = require('http').request(reqOpts, function(res) {
+            res.on('data', function(chunk) {
+                self.say(c, room, (room.charAt(0) === '#' ? "" : "/pm " + from + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+            });
+        });
 
-		req.write(data);
-		req.end();
-	}
+        req.write(data);
+        req.end();
+    }
 };
