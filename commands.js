@@ -124,6 +124,12 @@ exports.Cmd = {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
+    rk: function (c, params, from, room) {
+        if (!this.isRanked(from, '#')) return false;
+        this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
+        this.talk(c, room, '/roomunban ' + ', ' + params);
+    },
+    
     tb: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
