@@ -1,4 +1,5 @@
-"abo": "ekans",
+exports.frToEn = {
+    "abo": "ekans",
     "abra": "abra",
     "absol": "absol",
     "aeromite": "venomoth",
@@ -718,3 +719,4 @@
     "zoroark": "zoroark",
     "zorua": "zorua",
     "zygarde": "zygarde"
+};
