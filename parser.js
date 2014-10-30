@@ -161,7 +161,7 @@ exports.Parser = {
             }
         }
     },
-    upToHastebin: function(con, from, room, data) {
+    upToHastebin: function(c, from, room, data) {
 		var self = this;
 		var reqOpts = {
 			hostname: "hastebin.com",
