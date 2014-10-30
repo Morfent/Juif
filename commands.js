@@ -10,6 +10,7 @@
  *  from: celui qui exécute la commande
  *  room: room où la commande a été lancée
  */
+
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
 
@@ -48,11 +49,11 @@ exports.Cmd = {
      *       ☆ MODÉRATION ☆
      ***********************************/
 
-    ab: function(c, params, from, room) {
+    ab: function (c, params, from, room) {
         if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
         var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
-        fs.appendFile('data/banlist.txt', '\n' + data, function(err) {
+        fs.appendFile('data/banlist.txt', '\n' + data, function (err){
             console.log(err);
         });
         //On vire les sauts de lignes inutiles
@@ -62,7 +63,7 @@ exports.Cmd = {
         this.talk(c, room, 'Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
 
-    aub: function(c, params, from, room) {
+    aub: function (c, params, from, room) {
         if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
@@ -87,15 +88,15 @@ exports.Cmd = {
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
     },
 
-    banword: function(c, params, from, room) {
+    banword: function (c, params, from, room) {
         //if (!this.isRanked(from, '@') || !params) return false;
-        fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
+        fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function (err){
             console.log(err);
         });
         this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
     },
 
-    unbanword: function(c, params, from, room) {
+    unbanword: function (c, params, from, room) {
         //if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
@@ -111,57 +112,58 @@ exports.Cmd = {
                     var output = editedBannedWords.substr(0, idx) + editedBannedWords.substr(idx + search.length);
                     var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/bannedwords.txt', output);
-                    this.talk(c, room, 'Le mot ' + spl[0] + ' a bien été débanni.');
+                    this.talk(c, room, 'Le mot "' + spl[0] + '" a bien été débanni de la room' + spl[1] + '.');
                     success = true;
                 }
             }
         }
         if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
     },
-    bl: function(c, params, from, room) {
+
+    bl: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
-    tb: function(c, params, from, room) {
+    tb: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
     /*******************************************
      *       ☆ FONCTIONNALITÉS DIVERSES ☆
      *******************************************/
-    fc: function(c, params, from, room) {
+    fc: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
-    vdm: function(c, params, from, room) {
+    vdm: function (c, params, from, room) {
         if (!this.isRanked(from, '+')) return false;
         //y a ma clé API VDM, vous avez vu comment je suis gentil ?
-        var self = this;
-        var reqOpts = {
-            hostname: "api.fmylife.com",
-            method: "GET",
-            path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
-        };
+		var self = this;
+		var reqOpts = {
+			hostname: "api.fmylife.com",
+			method: "GET",
+			path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
+		};
         var data = '';
-        var req = require('http').request(reqOpts, function(res) {
+		var req = require('http').request(reqOpts, function(res) {
             res.on('data', function(chunk) {
                 data += chunk;
             });
-            res.on('end', function(chunk) {
-                parseString(data, function(err, result) {
+            res.on('end', function(chunk){
+                parseString(data, function (err, result) {
                     if (err) throw err;
                     self.talk(c, room, result.root.items[0].item[0].text);
                 });
             });
-        });
-        req.end();
-    },
+		});
+		req.end();
+	},
 
-    repeat: function(c, params, from, room) {
+    repeat: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
-    trad: function(c, params, from, room) {
+    trad: function (c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
