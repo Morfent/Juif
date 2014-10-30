@@ -10,7 +10,6 @@
  *  from: celui qui exécute la commande
  *  room: room où la commande a été lancée
  */
-
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
 
@@ -49,11 +48,12 @@ exports.Cmd = {
      *       ☆ MODÉRATION ☆
      ***********************************/
 
-    ab: function (c, params, from, room) {
-        if (!this.isRanked(from, '@') || !params) return false;
+    ab: function(c, params, from, room) {
+        //if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
+        if (!opts[1]) opts[1] = 'Pas de motif.';
         var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
-        fs.appendFile('data/banlist.txt', '\n' + data, function (err){
+        fs.appendFile('data/banlist.txt', '\n' + data, function(err) {
             console.log(err);
         });
         //On vire les sauts de lignes inutiles
@@ -63,8 +63,8 @@ exports.Cmd = {
         this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
 
-    aub: function (c, params, from, room) {
-        if (!this.isRanked(from, '#') || !params) return false;
+    aub: function(c, params, from, room) {
+        //if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
@@ -89,15 +89,15 @@ exports.Cmd = {
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
     },
 
-    banword: function (c, params, from, room) {
+    banword: function(c, params, from, room) {
         //if (!this.isRanked(from, '@') || !params) return false;
-        fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function (err){
+        fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
             console.log(err);
         });
         this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
     },
 
-    unbanword: function (c, params, from, room) {
+    unbanword: function(c, params, from, room) {
         //if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
@@ -121,19 +121,26 @@ exports.Cmd = {
         if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
     },
 
-    bl: function (c, params, from, room) {
-
+    bl: function(c, params, from, room) {
+    	if (!this.isRanked(from, '@')) return false;
+        var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
+        var str = '';
+        for (var i = 0; i < banlist.length; i++) {
+            var spl = banlist[i].toString().split('|');
+            str += spl[0] + ' (' + spl[1] + ') Motif: ' + spl[2] + '\n';
+        }
+        this.upToHastebin(c, from, room, str);
     },
 
-    tb: function (c, params, from, room) {
-       if (!this.isRanked(from, '#')) return false;
+    tb: function(c, params, from, room) {
+        if (!this.isRanked(from, '#')) return false;
         var opts = params.split(',');
         if (!opts[1]) return false;
         var to = opts[0];
         var time = opts[1] * 60 * 1000;
         var self = this;
         this.talk(c, room, '/rb' + to + ', Ban temporaire de ' + time + ' minutes.');
-        setTimeout(function(){
+        setTimeout(function() {
             self.talk(c, room, '/roomunban ' + to);
         }, time);
     },
@@ -141,45 +148,45 @@ exports.Cmd = {
     /*******************************************
      *       ☆ FONCTIONNALITÉS DIVERSES ☆
      *******************************************/
-    fc: function (c, params, from, room) {
+    fc: function(c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
-    rk: function (c, params, from, room) {
+    rk: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
         this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
         this.talk(c, room, '/roomunban ' + ', ' + params);
     },
 
-    vdm: function (c, params, from, room) {
+    vdm: function(c, params, from, room) {
         if (!this.isRanked(from, '+')) return false;
         //y a ma clé API VDM, vous avez vu comment je suis gentil ?
-		var self = this;
-		var reqOpts = {
-			hostname: "api.fmylife.com",
-			method: "GET",
-			path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
-		};
+        var self = this;
+        var reqOpts = {
+            hostname: "api.fmylife.com",
+            method: "GET",
+            path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
+        };
         var data = '';
-		var req = require('http').request(reqOpts, function(res) {
+        var req = require('http').request(reqOpts, function(res) {
             res.on('data', function(chunk) {
                 data += chunk;
             });
-            res.on('end', function(chunk){
-                parseString(data, function (err, result) {
+            res.on('end', function(chunk) {
+                parseString(data, function(err, result) {
                     if (err) throw err;
                     self.talk(c, room, result.root.items[0].item[0].text);
                 });
             });
-		});
-		req.end();
-	},
+        });
+        req.end();
+    },
 
-    repeat: function (c, params, from, room) {
+    repeat: function(c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
-    trad: function (c, params, from, room) {
+    trad: function(c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
 
