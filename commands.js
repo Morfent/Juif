@@ -13,6 +13,10 @@
 var fs = require('fs');
 
 exports.Cmd = {
+    /***********************************
+     *       ☆ CRÉDITS ☆
+     ***********************************/
+
     about: function(c, params, from, room) {
         var txt = 'Bot créé par Keb avec la technologie javascript côté serveur node.js';
         if (!this.isranked(from, '+')) {
@@ -21,16 +25,8 @@ exports.Cmd = {
             this.talk(c, room, '/pm ' + from + ', ' + txt);
         }
     },
-    '8ball': function(c, params, from, room) {
-        var phrases = fs.readFileSync('data/8ball.txt').toString().split("\n");
-        var random = Math.floor((Math.random() * phrases.length) + 1);
 
-        if (this.isRanked(from, '+')) {
-            this.talk(c, room, '(' + from.substr(1) + ') ' + phrases[random]);
-        } else {
-            this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
-        }
-    },
+
     talk: function(c, params, from, room) {
         if (!this.isRanked(from, '@')) return false;
         var txt = 'Réponses automatiques ';
@@ -46,6 +42,11 @@ exports.Cmd = {
         }
         this.talk(c, room, txt);
     },
+
+    /***********************************
+     *       ☆ MODÉRATION ☆
+     ***********************************/
+
     ab: function(c, params, from, room) {
         if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
@@ -59,6 +60,7 @@ exports.Cmd = {
         fs.writeFileSync('data/banlist.txt', output);
         this.talk(c, room, 'Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
+
     aub: function(c, params, from, room) {
         if (!this.isRanked(from, '#') || !params) return false;
 
@@ -83,15 +85,17 @@ exports.Cmd = {
         }
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
     },
+
     banword: function(c, params, from, room) {
-        //if (!this.isRanked(from, '@') || !params) return false;
+        if (!this.isRanked(from, '@') || !params) return false;
         fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
             console.log(err);
         });
         this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
     },
+
     unbanword: function(c, params, from, room) {
-        //if (!this.isRanked(from, '#') || !params) return false;
+        if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
@@ -112,5 +116,42 @@ exports.Cmd = {
             }
         }
         if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
-    }
+    },
+    bl: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    tb: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    /*******************************************
+     *       ☆ FONCTIONNALITÉS DIVERSES ☆
+     *******************************************/
+    fc: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    vdm: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    repeat: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    trad: function(c, params, from, room) {
+        this.talk(c, room, 'Cette commande est en cours de développement.');
+    },
+
+    '8ball': function(c, params, from, room) {
+        var phrases = fs.readFileSync('data/8ball.txt').toString().split("\n");
+        var random = Math.floor((Math.random() * phrases.length) + 1);
+
+        if (this.isRanked(from, '+')) {
+            this.talk(c, room, '(' + from.substr(1) + ') ' + phrases[random]);
+        } else {
+            this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
+        }
+    },
 };
