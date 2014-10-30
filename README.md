@@ -32,7 +32,6 @@ Il s'agit d'une version beta. Le script est encore loin d'être terminé à 100%
 TODO list
 =========
 
-`!unbanword` : débannir un mot. <br/>
 `!fc` : Codes amis <br/>
 `!rk` : kick <br/>
 `!trad` : noms des pokemons, des moves, des capacités <br/>
