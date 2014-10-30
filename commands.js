@@ -11,6 +11,7 @@
  *  room: room où la commande a été lancée
  */
 var fs = require('fs');
+var parseString = require('xml2js').parseString;
 
 exports.Cmd = {
     /***********************************
@@ -87,7 +88,7 @@ exports.Cmd = {
     },
 
     banword: function(c, params, from, room) {
-        if (!this.isRanked(from, '@') || !params) return false;
+        //if (!this.isRanked(from, '@') || !params) return false;
         fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
             console.log(err);
         });
@@ -95,7 +96,7 @@ exports.Cmd = {
     },
 
     unbanword: function(c, params, from, room) {
-        if (!this.isRanked(from, '#') || !params) return false;
+        //if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
@@ -133,7 +134,27 @@ exports.Cmd = {
     },
 
     vdm: function(c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+        if (!this.isRanked(from, '+')) return false;
+        //y a ma clé API VDM, vous avez vu comment je suis gentil ?
+        var self = this;
+        var reqOpts = {
+            hostname: "api.fmylife.com",
+            method: "GET",
+            path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
+        };
+        var data = '';
+        var req = require('http').request(reqOpts, function(res) {
+            res.on('data', function(chunk) {
+                data += chunk;
+            });
+            res.on('end', function(chunk) {
+                parseString(data, function(err, result) {
+                    if (err) throw err;
+                    self.talk(c, room, result.root.items[0].item[0].text);
+                });
+            });
+        });
+        req.end();
     },
 
     repeat: function(c, params, from, room) {
