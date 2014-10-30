@@ -33,11 +33,9 @@ TODO list
 =========
 
 `!fc` : Codes amis <br/>
-`!rk` : kick <br/>
 `!trad` : noms des pokemons, des moves, des capacités <br/>
 `!repeat` : Répéter un message à intervalles réguliers <br/>
 `!bl` : liste des utilisateurs bannis <br/>
-`!tb` : ban temporaire <br/>
 `!bs` : bescherelle des mongols <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
 `this.checklink()` : liens interdits (warn = désactivation du lien) <br/>
