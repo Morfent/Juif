@@ -33,7 +33,6 @@ TODO list
 =========
 
 `!fc` : Codes amis <br/>
-`!trad` : noms des pokemons, des moves, des capacités <br/>
 `!repeat` : Répéter un message à intervalles réguliers <br/>
 `!bs` : bescherelle des mongols <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
