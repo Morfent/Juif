@@ -36,13 +36,10 @@ TODO list
 `!rk` : kick <br/>
 `!trad` : noms des pokemons, des moves, des capacités <br/>
 `!repeat` : Répéter un message à intervalles réguliers <br/>
-`!vdm` : VDM <br/>
 `!bl` : liste des utilisateurs bannis <br/>
 `!tb` : ban temporaire <br/>
 `!bs` : bescherelle des mongols <br/>
-`this.isYtLink()` : reconnaissance des liens youtube <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
 `this.checklink()` : liens interdits (warn = désactivation du lien) <br/>
-Réponse auto lors des salutations.
 
 
