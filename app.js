@@ -28,8 +28,7 @@ global.Cmd = require('./commands.js').Cmd;
 
 //Dex (noms des pokemons)
 //On précharge une bonne fois pour toute
-global.frToEn = require('./data/frtoen.js');
-global.enToFr = require('./data/entofr.js');
+global.trad = require('./data/trad/pokemons.js');
 
 global.send_datas = function(conn, d) {
     if (conn.connected) {
