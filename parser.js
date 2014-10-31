@@ -45,7 +45,7 @@ exports.Parser = {
                 this.bannedwords(c, t[4], t[3], this.room);
                 this.checkYtlink(c, t[4], t[3], this.room);
                 break;
-                //Ce qui se passe en PM
+            //Ce qui se passe en PM
             case 'pm':
                 console.log('DEBUG: (Room PM) ' + t[2] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[2], '#' + t[2]);
@@ -112,6 +112,10 @@ exports.Parser = {
             }
         };
 
+        //Whitelisted ?
+        for (var i = 0; i < wl.length; i++) {
+            if (makeId(user) == wl[i]) return true;
+        }
         var rank = user.charAt(0);
 
         if (!groups[rank]) return false;
