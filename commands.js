@@ -187,12 +187,12 @@ exports.Cmd = {
     },
 
     trad: function(c, params, from, room) {
-        params = makeId(params);
+        var pokemon = makeId(params);
         if (!this.isRanked(from, '+')) room = '#' + from;
-        if (frToEn.frToEn[params]) {
-            this.talk(c, room, 'Nom du pokemon en anglais: ' + frToEn.frToEn[params]);
-        } else if (enToFr.enToFr[params]) {
-            this.talk(c, room, 'Nom du pokemon en français: ' + enToFr.enToFr[params]);
+        if (trad.ToEn[pokemon]) {
+            this.talk(c, room, 'Nom du pokemon en anglais: ' + trad.ToEn[pokemon]);
+        } else if (trad.ToFr[pokemon]) {
+            this.talk(c, room, 'Nom du pokemon en français: ' + trad.ToFr[pokemon]);
         } else {
             this.talk(c, room, 'Ce pokemon n\'existe pas.');
         }
