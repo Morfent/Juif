@@ -139,7 +139,7 @@ exports.Cmd = {
         var to = opts[0];
         var time = opts[1] * 60 * 1000;
         var self = this;
-        this.talk(c, room, '/rb' + to + ', Ban temporaire de ' + time + ' minutes.');
+        this.talk(c, room, '/rb ' + to + ', Ban temporaire de ' + time + ' minutes.');
         setTimeout(function() {
             self.talk(c, room, '/roomunban ' + to);
         }, time);
