@@ -32,7 +32,6 @@ Il s'agit d'une version beta. Le script est encore loin d'être terminé à 100%
 TODO list
 =========
 
-`!fc` : Codes amis <br/>
 `!repeat` : Répéter un message à intervalles réguliers <br/>
 `!bs` : bescherelle des mongols <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
