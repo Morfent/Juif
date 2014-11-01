@@ -229,14 +229,22 @@ exports.Cmd = {
     },
 
     trad: function(c, params, from, room) {
-        var pokemon = makeId(params);
+        var item = makeId(params);
         if (!this.isRanked(from, '+')) room = '#' + from;
-        if (trad.ToEn[pokemon]) {
-            this.talk(c, room, 'Nom du pokemon en anglais: ' + trad.ToEn[pokemon]);
-        } else if (trad.ToFr[pokemon]) {
-            this.talk(c, room, 'Nom du pokemon en français: ' + trad.ToFr[pokemon]);
+        if (trad.nameToEn[item]) {
+            this.talk(c, room, 'Nom du pokemon en anglais: ' + trad.nameToEn[item]);
+        } else if (trad.nameToFr[item]) {
+            this.talk(c, room, 'Nom du pokemon en français: ' + trad.nameToFr[item]);
+        } else if (trad.moveToEn[item]) {
+            this.talk(c, room, 'Nom de l\'attaque en anglais: ' + trad.moveToEn[item]);
+        } else if (trad.moveToFr[item]) {
+            this.talk(c, room, 'Nom de l\'attaque en français: ' + trad.moveToFr[item]);
+        } else if (trad.abilityToEn[item]) {
+            this.talk(c, room, 'Nom de la capacité spéciale en anglais: ' + trad.abilityToEn[item])
+        } else if (trad.abilityToFr[item]) {
+            this.talk(c, room, 'Nom de la capacité spéciale en français: ' + trad.abilityToFr[item])
         } else {
-            this.talk(c, room, 'Ce pokemon n\'existe pas.');
+            this.talk(c, room, 'Rien n\'a été trouvé.')
         }
     },
 
