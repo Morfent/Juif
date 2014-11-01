@@ -45,7 +45,7 @@ exports.Parser = {
                 this.bannedwords(c, t[4], t[3], this.room);
                 this.checkYtlink(c, t[4], t[3], this.room);
                 break;
-            //Ce qui se passe en PM
+                //Ce qui se passe en PM
             case 'pm':
                 console.log('DEBUG: (Room PM) ' + t[2] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[2], '#' + t[2]);
@@ -141,6 +141,9 @@ exports.Parser = {
         if (msg.indexOf(botName) > -1) {
             var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
             var random = Math.floor((Math.random() * phrases.length) + 1);
+            //Probabilité de 1/3 pour une réponse
+            var c = Math.floor((Math.random() * 3 + 1));
+            if (c == 1) this.talk(c, room, phrases[random] + ' ' + from);
             this.talk(c, room, phrases[random]);
         }
         //Salutations
@@ -150,7 +153,6 @@ exports.Parser = {
             var random = Math.floor((Math.random() * phrases.length) + 1);
             //Si l'utilisateur a un grade, on l'enlève du nom
             if (this.isRanked(from, '+')) from = from.substr(1);
-            //Probabilité de 1/3 pour une réponse
             var p = Math.floor((Math.random() * 3 + 1));
             if (p == 1) this.talk(c, room, phrases[random] + ' ' + from);
         }
@@ -170,7 +172,11 @@ exports.Parser = {
                 return false;
             }
         }
-        //On va chercher les infos de la vidéo
+        // Si l'extraction de l'id foire, on arrête la fonction
+        // plutôt que de faire crasher le bot
+        if (id.length != 11) return false;
+
+
         var reqOpts = {
             hostname: "gdata.youtube.com",
             method: "GET",
@@ -181,9 +187,7 @@ exports.Parser = {
         };
         var self = this;
         var data = '';
-        // Si l'extraction de l'id foire, on arrête la fonction
-        // plutôt que de faire crasher le bot
-        if (id.length != 11) return false;
+
         var req = require('http').request(reqOpts, function(res) {
             res.on('data', function(chunk) {
                 data += chunk;
