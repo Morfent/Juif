@@ -49,7 +49,7 @@ exports.Cmd = {
      ***********************************/
 
     ab: function(c, params, from, room) {
-        //if (!this.isRanked(from, '@') || !params) return false;
+        if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
         if (!opts[1]) opts[1] = 'Pas de motif.';
         var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
@@ -64,7 +64,7 @@ exports.Cmd = {
     },
 
     aub: function(c, params, from, room) {
-        //if (!this.isRanked(from, '#') || !params) return false;
+        if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
@@ -90,7 +90,7 @@ exports.Cmd = {
     },
 
     banword: function(c, params, from, room) {
-        //if (!this.isRanked(from, '@') || !params) return false;
+        if (!this.isRanked(from, '@') || !params) return false;
         fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
             console.log(err);
         });
@@ -98,7 +98,7 @@ exports.Cmd = {
     },
 
     unbanword: function(c, params, from, room) {
-        //if (!this.isRanked(from, '#') || !params) return false;
+        if (!this.isRanked(from, '#') || !params) return false;
 
         var success = false;
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
@@ -149,7 +149,49 @@ exports.Cmd = {
      *       ☆ FONCTIONNALITÉS DIVERSES ☆
      *******************************************/
     fc: function(c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+        var opts = params.split(',');
+        var success = false;
+
+        if (!opts[1]) {
+            var fc = fs.readFileSync('data/fc.txt').toString().split('\n');
+            for (var i = 0; i < fc.length; i++) {
+                var spl = fc[i].toString().split('|');
+                if (makeId(params) == spl[0]) {
+                    this.talk(c, room, 'Le code ami de ' + params + ' est: ' + spl[1]);
+                    success = true;
+                }
+            }
+            if (!success) {
+                this.talk(c, room, 'Le code ami de ' + params + ' n\'est pas encore enregistré.');
+            }
+        }
+
+        if (opts[0] == 'add') {
+            if (opts[1].length != 15) {
+                this.talk(c, room, 'Un code ami doit être composé que de 12 chiffres.');
+                return false;
+            }
+            //S'il existe déjà, bah on écrase et on change
+            var e = fs.readFileSync('data/fc.txt').toString().split('\n');
+            var f = fs.readFileSync('data/fc.txt').toString();
+            for (var i = 0; i < e.length; i++) {
+                var spl = e[i].toString().split('|');
+                if (spl[0] == makeId(from)) {
+                    var search = makeId(from) + '|' + spl[1];
+                    var idx = f.indexOf(search);
+                    if (idx >= 0) {
+                        var output = f.substr(0, idx) + f.substr(idx + search.length);
+                        var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
+                        fs.writeFileSync('data/fc.txt', output);
+                        this.talk(c, room, 'Votre code ami a bien été remplacé par ' + opts[1]);
+                    }
+                }
+            }
+            fs.appendFile('data/fc.txt', makeId(from) + '|' + opts[1] + '\n', function(err) {
+                console.log(err);
+            });
+            this.talk(c, room, 'Votre code ami a bien été enregistré.');
+        }
     },
 
     rk: function(c, params, from, room) {
