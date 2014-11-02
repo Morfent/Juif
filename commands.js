@@ -20,7 +20,7 @@ exports.Cmd = {
 
     about: function(c, params, from, room) {
         var txt = 'Juif est un bot créé par Keb avec la technologie javascript côté serveur node.js. Ce bot est open source: https://github.com/Kebabier/Juif';
-        if (this.isranked(from, '+')) {
+        if (this.isRanked(from, '+')) {
             this.talk(c, room, txt);
         } else {
             this.talk(c, room, '/pm ' + from + ', ' + txt);
