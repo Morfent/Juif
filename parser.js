@@ -247,7 +247,8 @@ exports.Parser = {
         if (this.timestamp2 != null && this.timestamp2 != null) {
             var lag1 = this.timestamp2 - this.timestamp1;
             var lag2 = this.timestamp3 - this.timestamp1;
-            this.talk(c, room, 'Lag test: ' + Math.round(lag1) + ' / ' + Math.round(lag2) + ' ms.');
+            var lag = lag2 - lag1;
+            this.talk(c, room, 'Lag test: ' + Math.round(lag) + ' ms.');
             this.timestamp1 = null;
             this.timestamp2 = null;
             this.timestamp3 = null;
