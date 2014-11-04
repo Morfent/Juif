@@ -257,5 +257,11 @@ exports.Cmd = {
         } else {
             this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
         }
+    },
+    fagtest: function(c, params, from, room) {
+        if (!this.isRanked(from, '%')) return false;
+        this.talk(c, room, 'PATA...');
+        this.talk(c, room, 'PON!');
+        this.timestamp1 = Date.now();
     }
 };
