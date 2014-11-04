@@ -11,8 +11,13 @@
  */
 var fs = require('fs');
 
+
 exports.Parser = {
     room: '', // La room où se passe l'action, acualisée en permanence
+    //lagtest
+    timestamp1: null,
+    timestamp2: null,
+    timestamp3: null,
     parser: function(c, data) {
         if (!data) return;
         if (data.indexOf('\n') > -1) {
@@ -44,12 +49,26 @@ exports.Parser = {
                 this.autoresponses(c, t[4], t[3], this.room);
                 this.bannedwords(c, t[4], t[3], this.room);
                 this.checkYtlink(c, t[4], t[3], this.room);
+                if (t[4] == 'PATA...') {
+                    this.timestamp2 = Date.now();
+                }
+                if (t[4] == 'PON!') {
+                    this.timestamp3 = Date.now();
+                    this.lagtest(c, this.room);
+                }
                 break;
                 //Ce qui se passe en PM
             case 'pm':
                 console.log('DEBUG: (Room PM) ' + t[2] + ': ' + t[4]);
                 this.iscommand(c, t[4], t[2], '#' + t[2]);
                 this.autoresponses(c, t[4], t[2], '#' + t[2]);
+                if (t[4] == 'PATA...') {
+                    this.timestamp2 = Date.now();
+                }
+                if (t[4] == 'PON!') {
+                    this.timestamp3 = Date.now();
+                    this.lagtest(c, '#' + t[2]);
+                }
                 break;
             case 'J':
                 //Bannissement permanant (expérimental)
@@ -71,7 +90,7 @@ exports.Parser = {
                 var command = msg;
             }
             //La condition retourne 0 si la commande n'existe pas
-            if (Cmd[command]) Cmd[command].call(this, c, params, from, room);
+            if (typeof Cmd[command] === 'function') Cmd[command].call(this, c, params, from, room);
         }
     },
     talk: function(c, room, msg) {
@@ -176,7 +195,6 @@ exports.Parser = {
         // plutôt que de faire crasher le bot
         if (id.length != 11) return false;
 
-
         var reqOpts = {
             hostname: "gdata.youtube.com",
             method: "GET",
@@ -220,6 +238,19 @@ exports.Parser = {
                 console.log('DEBUG: ' + spl[0] + ' est un mot banni.');
                 this.talk(c, room, '/mute ' + user + ', Mot banni.');
             }
+        }
+    },
+    lagtest: function(c, room) {
+        //console.log('lancement de lagtest')
+        console.log(this.timestamp1);
+        console.log(this.timestamp2);
+        if (this.timestamp2 != null && this.timestamp2 != null) {
+            var lag1 = this.timestamp2 - this.timestamp1;
+            var lag2 = this.timestamp3 - this.timestamp1;
+            this.talk(c, room, 'Lag test: ' + Math.round(lag1) + ' / ' + Math.round(lag2) + ' ms.');
+            this.timestamp1 = null;
+            this.timestamp2 = null;
+            this.timestamp3 = null;
         }
     },
     upToHastebin: function(c, from, room, data) {
