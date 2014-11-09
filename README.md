@@ -41,7 +41,7 @@ Symbole ✗: La commande n'est pas encore prête.<br/>
 ✓ !**ab user(, reason)** - Bannissement définitif<br/>
 ✓ !**aub user** - Enlever le bannissement définitif<br/>
 ✓ !**rk user** - Permet de kicker un utilisateur<br/>
-✓ !**banword mot** - Bannir une mot ()<br/>
+✓ !**banword mot** - Bannir une mot<br/>
 ✓ !**unbanword mot** - débannir un mot<br/>
 ✓ !**bl** - Afficher la liste des utilisateurs bannis définitivement<br/>
 ☑ !**tb user, durée** - Bannir une utilisateur temporairement (durée est un chiffre en minutes)<br/>
