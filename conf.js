@@ -14,7 +14,7 @@
  **/
 
 exports.username = 'Juif';
-exports.pw       = '';
+exports.pw       = 'default';
 exports.server   = 'sim.smogon.com';
 exports.port     = 8000;
 exports.rooms    = ['franais'];
