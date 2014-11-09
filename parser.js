@@ -157,7 +157,7 @@ exports.Parser = {
          *     var random = Math.floor((Math.random() * phrases.length) + 1);
          *     this.talk(c, room, phrases[random]);
          */
-        if (!autoR) return false;
+        if (!Conf.autoR) return false;
         if (msg.indexOf(botName) > -1) {
             var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
             var random = Math.floor((Math.random() * phrases.length) + 1);
