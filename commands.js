@@ -155,9 +155,27 @@ exports.Cmd = {
                 this.talk(c, room, 'Un code ami doit être composé que de 12 chiffres.');
                 return false;
             }
-            //S'il existe déjà, bah on écrase et on change
+            var a = fs.readFileSync('data/fc.txt').toString().split('\n');
+            for (var i = 0; i < a.length; i++) {
+                var spl = a[i].toString().split('|');
+                if (spl[0] == makeId(from)) {
+                    this.talk(c, room, 'Vous avez déjà enregistré un code ami sous ce nom (utilisez le paramètre "edit" pour modifier votre code ami) .')
+                    return false;
+                }
+            }
+            fs.appendFile('data/fc.txt', makeId(from) + '|' + opts[1] + '\n', function(err) {
+                console.log(err);
+            });
+            this.talk(c, room, 'Le code ami de ' + from + ' a bien été enregistré.');
+        }
+        if (opts[0] == 'edit') {
             var e = fs.readFileSync('data/fc.txt').toString().split('\n');
             var f = fs.readFileSync('data/fc.txt').toString();
+            var str = makeId(from) + '|' + opts[1];
+            if (opts[1].length != 15) {
+                this.talk(c, room, 'Un code ami doit être composé que de 12 chiffres.');
+                return false;
+            }
             for (var i = 0; i < e.length; i++) {
                 var spl = e[i].toString().split('|');
                 if (spl[0] == makeId(from)) {
@@ -165,16 +183,12 @@ exports.Cmd = {
                     var idx = f.indexOf(search);
                     if (idx >= 0) {
                         var output = f.substr(0, idx) + f.substr(idx + search.length);
-                        var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
-                        fs.writeFileSync('data/fc.txt', output);
-                        this.talk(c, room, 'Votre code ami a bien été remplacé par ' + opts[1]);
+                        output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
+                        fs.writeFileSync('data/fc.txt', output + '\n' + str);
+                        this.talk(c, room, 'Le code ami de ' + from + ' a bien été remplacé par ' + opts[1]);
                     }
                 }
             }
-            fs.appendFile('data/fc.txt', makeId(from) + '|' + opts[1] + '\n', function(err) {
-                console.log(err);
-            });
-            this.talk(c, room, 'Votre code ami a bien été enregistré.');
         }
     },
 
