@@ -6,32 +6,11 @@ var wsclient = require('websocket').client,
     sys = require('sys'),
     https = require('https');
 
-/************************************
-            ☆ CONFIG ☆
-************************************/
-//informations sur le serveur
-var server = 'sim.smogon.com',
-    port = 8000,
-    rooms = ['franais'];
-//Caractère servant à appeler une commande
-global.comchar = '!';
-
-//Réponses automatiques
-global.autoR = true;
-
-//Whitelist
-global.wl = ['keb'];
-
-if (!process.argv[2]) {
-    console.log('Veuillez spécifier un nom d\'utilisateur.');
-    process.exit(-1)
-}
-
 global.Parser = require('./parser.js').Parser;
 global.Cmd = require('./commands.js').Cmd;
+global.Conf = require('./conf.js');
 
-//Dex (noms des pokemons)
-//On précharge une bonne fois pour toute
+//On précharge les données une bonne fois pour toute
 global.trad = require('./data/trad/pokemondatas.js');
 
 global.send_datas = function(conn, d) {
@@ -45,8 +24,13 @@ global.makeId = function(d) {
     return d.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-var username = makeId(process.argv[2]),
-    pw = process.argv[3];
+var username = ((process.argv[2]) ? makeId(process.argv[2]) : Conf.username);
+var pw = ((process.argv[3]) ? process.argv[2] : Conf.pw);
+
+if (!username) {
+    console.log('Veuillez spécifier un nom d\'utilisateur.');
+    process.exit(-1);
+}
 
 global.botName = username;
 
@@ -122,8 +106,8 @@ ws.on('connect', function(conn) {
                     //Tout est ok
                     console.log('Connecté en tant que ' + username);
                     //On rejoint les rooms
-                    for (var i = 0; i < rooms.length; i++) {
-                        send_datas(conn, '|/join ' + rooms[i]);
+                    for (var i = 0; i < Conf.rooms.length; i++) {
+                        send_datas(conn, '|/join ' + Conf.rooms[i]);
                     }
 
                 }
@@ -133,5 +117,5 @@ ws.on('connect', function(conn) {
     });
 });
 
-var hi = 'ws://' + server + ':' + port + '/showdown/540045/random12/websocket';
+var hi = 'ws://' + Conf.server + ':' + Conf.port + '/showdown/540045/random12/websocket';
 ws.connect(hi);
