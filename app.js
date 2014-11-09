@@ -32,6 +32,11 @@ if (!username) {
     process.exit(-1);
 }
 
+if (username == 'Juif' && pw == 'default') {
+    console.log('Veuillez d\'abord passer par le fichier conf.js');
+    process.exit(-1);
+}
+
 global.botName = username;
 
 /*
