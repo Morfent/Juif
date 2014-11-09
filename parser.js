@@ -1,267 +1,275 @@
 /*
- *  commands.js
- *  Toutes (ou presque) les commandes du bot
- *  doivent se trouver ici.
- *  Doc:
- *  Pour une commande de type:
- *  /cmd params
- *  La variable params contient les paramètres
- *  de la commande, qui sont à parser comme on veut
- *  from: celui qui exécute la commande
- *  room: room où la commande a été lancée
+ * Parser.js
+ * Ce fichier sert à traiter les données reçues
+ * Doc:
+ * ** Faire parler le bot **
+ *    this.talk(c, ROOM DÉSIRÉE, MESSAGE);
+ *    --------------
+ * ** Vérifier le grade d'un utilisateur: **
+ *    this.isRanked(USER, GRADE MINIMUM REQUIS);
+ *    Remarque: retourne 'true' ou 'false'
  */
 var fs = require('fs');
-var parseString = require('xml2js').parseString;
 
-exports.Cmd = {
-    /***********************************
-     *       ☆ CRÉDITS ☆
-     ***********************************/
 
-    about: function(c, params, from, room) {
-        var txt = 'Juif est un bot créé par Keb avec la technologie javascript côté serveur node.js. Ce bot est open source: https://github.com/Kebabier/Juif';
-        if (this.isRanked(from, '+')) {
-            this.talk(c, room, txt);
+exports.Parser = {
+    room: '', // La room où se passe l'action, acualisée en permanence
+    //lagtest
+    timestamp1: null,
+    timestamp2: null,
+    timestamp3: null,
+    parser: function(c, data) {
+        if (!data) return;
+        if (data.indexOf('\n') > -1) {
+            var spl = data.split('\n');
+            for (var i = 0; i < spl.length; i++) {
+                if (spl[i].split('|')[1] && (spl[i].split('|')[1] === 'init' || spl[i].split('|')[1] === 'tournament')) {
+                    this.room = '';
+                    break;
+                }
+                this.parser(c, spl[i]);
+            }
+            return;
+        }
+
+        var t = data.split('|');
+
+        if (!t[1]) {
+            t = data.split('>');
+            if (!t[1])
+                return;
+            this.room = t[1];
+        }
+
+        switch (t[1]) {
+            //Ce qui se passe sur la room
+            case 'c:':
+                console.log('DEBUG: (Room ' + this.room + ') ' + t[3] + ': ' + t[4]);
+                this.iscommand(c, t[4], t[3], this.room);
+                this.autoresponses(c, t[4], t[3], this.room);
+                this.bannedwords(c, t[4], t[3], this.room);
+                this.checkYtlink(c, t[4], t[3], this.room);
+                if (t[4] == 'PATA...') {
+                    this.timestamp2 = Date.now();
+                }
+                if (t[4] == 'PON!') {
+                    this.timestamp3 = Date.now();
+                    this.lagtest(c, this.room);
+                }
+                break;
+                //Ce qui se passe en PM
+            case 'pm':
+                console.log('DEBUG: (Room PM) ' + t[2] + ': ' + t[4]);
+                this.iscommand(c, t[4], t[2], '#' + t[2]);
+                this.autoresponses(c, t[4], t[2], '#' + t[2]);
+                if (t[4] == 'PATA...') {
+                    this.timestamp2 = Date.now();
+                }
+                if (t[4] == 'PON!') {
+                    this.timestamp3 = Date.now();
+                    this.lagtest(c, '#' + t[2]);
+                }
+                break;
+            case 'J':
+                //Bannissement permanant (expérimental)
+                this.isBanned(c, t[2], this.room);
+                break;
+        }
+    },
+    //Message ou commande ?
+    iscommand: function(c, msg, from, room) {
+        if (msg.substr(0, Conf.comchar.length) === Conf.comchar) {
+            //C'est une commande, on vérifie si elle existe
+            msg = msg.substr(Conf.comchar.length);
+            var index = msg.indexOf(' ');
+            var params = null;
+            var command = ''
+            if (index > -1) {
+                command = msg.substr(0, index);
+                params = msg.substr(index + 1).trim();
+            } else {
+                command = msg;
+            }
+            //La condition retourne 0 si la commande n'existe pas
+            if (typeof Cmd[command] === 'function') Cmd[command].call(this, c, params, from, room);
+        }
+    },
+    talk: function(c, room, msg) {
+        if (room.charAt(0) == '#') {
+            var to = room.substr(1);
+            var txt = '|/pm ' + to + ', ' + msg;
+            send_datas(c, txt);
         } else {
-            this.talk(c, room, '/pm ' + from + ', ' + txt);
+            var txt = room + '|' + msg;
+            send_datas(c, txt);
         }
     },
+    isRanked: function(user, required) {
+        var groups = {
+            '~': {
+                rank: 5,
+                desc: 'Admin'
+            },
+            '&': {
+                rank: 4,
+                desc: 'Leader'
+            },
+            '#': {
+                rank: 3,
+                desc: 'Room Owner'
+            },
+            '@': {
+                rank: 2,
+                desc: 'Moderator'
+            },
+            '%': {
+                rank: 1,
+                desc: 'Driver'
+            },
+            '+': {
+                rank: 0,
+                desc: 'Voiced'
+            }
+        };
 
+        //Whitelisted ?
+        for (var i = 0; i < Conf.wl.length; i++) {
+            if (makeId(user) == Conf.wl[i]) return true;
+        }
+        var rank = user.charAt(0);
 
-    talk: function(c, params, from, room) {
-        if (!this.isRanked(from, '@')) return false;
-        var txt = 'Réponses automatiques ';
-        if (params === 'on') {
-            Conf.autoR = true;
-            txt += 'activées.';
-        } else if (params === 'off') {
-            Conf.autoR = false;
-            txt += 'désactivées.'
+        if (!groups[rank]) return false;
+        if (groups[rank].rank >= groups[required].rank) {
+            return true;
         } else {
-            //Précaution
-            txt = 'Vous devez utiliser le paramètre "on" ou "off".'
+            return false;
         }
-        this.talk(c, room, txt);
     },
-
-    /***********************************
-     *       ☆ MODÉRATION ☆
-     ***********************************/
-
-    ab: function(c, params, from, room) {
-        if (!this.isRanked(from, '@') || !params) return false;
-        var opts = params.split(',');
-        if (!opts[1]) opts[1] = 'Pas de motif.';
-        var data = makeId(opts[0]) + '|' + room + '|' + opts[1];
-        fs.appendFile('data/banlist.txt', '\n' + data, function(err) {
-            console.log(err);
-        });
-        //On vire les sauts de lignes inutiles
-        var e = fs.readFileSync('data/banlist.txt').toString();
-        var output = e.replace(/^\s*$[\n\r]{1,}/gm, '');
-        fs.writeFileSync('data/banlist.txt', output);
-        this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
+    autoresponses: function(c, msg, from, room) {
+        /*
+         * Créer une instance de réponse aléatoire:
+         * Rechercher le mot que vous souhaitez, exemple 'test':
+         *     if (msg.indexOf('test') > -1) {//Instructions}
+         * Créez votre fichier (exemple test.txt) dans le répertoire /data/
+         * Vous pouvez y mettre une réponse par ligne.
+         * Enfin dans le bloc d'instructions:
+         *     var phrases = fs.readFileSync('data/NOMDUFICHIER.txt').toString().split("\n");
+         *     var random = Math.floor((Math.random() * phrases.length) + 1);
+         *     this.talk(c, room, phrases[random]);
+         */
+        if (!autoR) return false;
+        if (msg.indexOf(botName) > -1) {
+            var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
+            var random = Math.floor((Math.random() * phrases.length) + 1);
+            //Probabilité de 1/3 pour une réponse
+            var c = Math.floor((Math.random() * 3 + 1));
+            if (c == 1) this.talk(c, room, phrases[random] + ' ' + from);
+            this.talk(c, room, phrases[random]);
+        }
+        //Salutations
+        var words = ['hi', 'salut', 'bonjour', 'yo', 'slt'];
+        if (words.indexOf(msg) > -1) {
+            var phrases = fs.readFileSync('data/autohello.txt').toString().split("\n");
+            var random = Math.floor((Math.random() * phrases.length) + 1);
+            //Si l'utilisateur a un grade, on l'enlève du nom
+            if (this.isRanked(from, '+')) from = from.substr(1);
+            var p = Math.floor((Math.random() * 3 + 1));
+            if (p == 1) this.talk(c, room, phrases[random] + ' ' + from);
+        }
     },
-
-    aub: function(c, params, from, room) {
-        if (!this.isRanked(from, '#') || !params) return false;
-
-        var success = false;
-        var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
-        var editedbanlist = fs.readFileSync('data/banlist.txt').toString();
-
-        for (var i = 0; i < banlist.length; i++) {
-            var spl = banlist[i].toString().split('|');
-            if (makeId(params) == spl[0]) {
-                var search = spl[0] + '|' + spl[1] + '|' + spl[2];
-                var idx = editedbanlist.indexOf(search);
-                if (idx >= 0) {
-                    var output = editedbanlist.substr(0, idx) + editedbanlist.substr(idx + search.length);
-                    //On tej la ligne vide inutile qui fait planter le script
-                    var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
-                    fs.writeFileSync('data/banlist.txt', output);
-                    this.talk(c, room, '/roomunban ' + spl[0]);
-                    this.talk(c, room, spl[0] + ' a bien été débanni.');
-                    success = true;
+    checkYtlink: function(c, msg, from, room) {
+        var spl = msg.split(' ');
+        var id = null;
+        //Extraction de l'id de la vidéo depuis un message
+        for (var i = 0; i < spl.length; i++) {
+            var search = spl[i].indexOf('youtube.com/watch?v=');
+            if (search > -1) {
+                id = spl[i].split('=')[1];
+                if (id.length != 11) {
+                    id = spl[i].substring(spl[i].lastIndexOf("v=") + 1, spl[i].lastIndexOf("&list")).substr(1);
                 }
-            }
-        }
-        if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
-    },
-
-    banword: function(c, params, from, room) {
-        if (!this.isRanked(from, '@') || !params) return false;
-        fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
-            console.log(err);
-        });
-        this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
-    },
-
-    unbanword: function(c, params, from, room) {
-        if (!this.isRanked(from, '#') || !params) return false;
-
-        var success = false;
-        var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
-        var editedBannedWords = fs.readFileSync('data/bannedwords.txt').toString();
-
-        for (var i = 0; i < bannedwords.length; i++) {
-            var spl = bannedwords[i].toString().split('|');
-            if (makeId(params) == spl[0] && spl[1] == room) {
-                var search = spl[0] + '|' + spl[1];
-                var idx = editedBannedWords.indexOf(search);
-                if (idx >= 0) {
-                    var output = editedBannedWords.substr(0, idx) + editedBannedWords.substr(idx + search.length);
-                    var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
-                    fs.writeFileSync('data/bannedwords.txt', output);
-                    this.talk(c, room, 'Le mot "' + spl[0] + '" a bien été débanni de la room' + spl[1] + '.');
-                    success = true;
-                }
-            }
-        }
-        if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
-    },
-
-    bl: function(c, params, from, room) {
-        if (!this.isRanked(from, '@')) return false;
-        var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
-        var str = '';
-        for (var i = 0; i < banlist.length; i++) {
-            var spl = banlist[i].toString().split('|');
-            str += spl[0] + ' (' + spl[1] + ') Motif: ' + spl[2] + '\n';
-        }
-        this.upToHastebin(c, from, room, str);
-    },
-
-    tb: function(c, params, from, room) {
-        if (!this.isRanked(from, '#')) return false;
-        var opts = params.split(',');
-        if (!opts[1]) return false;
-        var to = opts[0];
-        var time = opts[1] * 60 * 1000;
-        var self = this;
-        this.talk(c, room, '/rb ' + to + ', Ban temporaire de ' + time + ' minutes.');
-        setTimeout(function() {
-            self.talk(c, room, '/roomunban ' + to);
-        }, time);
-    },
-
-    /*******************************************
-     *       ☆ FONCTIONNALITÉS DIVERSES ☆
-     *******************************************/
-    fc: function(c, params, from, room) {
-        var opts = params.split(',');
-        var success = false;
-
-        if (!opts[1]) {
-            var fc = fs.readFileSync('data/fc.txt').toString().split('\n');
-            for (var i = 0; i < fc.length; i++) {
-                var spl = fc[i].toString().split('|');
-                if (makeId(params) == spl[0]) {
-                    this.talk(c, room, 'Le code ami de ' + params + ' est: ' + spl[1]);
-                    success = true;
-                }
-            }
-            if (!success) {
-                this.talk(c, room, 'Le code ami de ' + params + ' n\'est pas encore enregistré.');
-            }
-        }
-
-        if (opts[0] == 'add') {
-            if (opts[1].length != 15) {
-                this.talk(c, room, 'Un code ami doit être composé que de 12 chiffres.');
+            } else {
                 return false;
             }
-            //S'il existe déjà, bah on écrase et on change
-            var e = fs.readFileSync('data/fc.txt').toString().split('\n');
-            var f = fs.readFileSync('data/fc.txt').toString();
-            for (var i = 0; i < e.length; i++) {
-                var spl = e[i].toString().split('|');
-                if (spl[0] == makeId(from)) {
-                    var search = makeId(from) + '|' + spl[1];
-                    var idx = f.indexOf(search);
-                    if (idx >= 0) {
-                        var output = f.substr(0, idx) + f.substr(idx + search.length);
-                        var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
-                        fs.writeFileSync('data/fc.txt', output);
-                        this.talk(c, room, 'Votre code ami a bien été remplacé par ' + opts[1]);
-                    }
-                }
-            }
-            fs.appendFile('data/fc.txt', makeId(from) + '|' + opts[1] + '\n', function(err) {
-                console.log(err);
-            });
-            this.talk(c, room, 'Votre code ami a bien été enregistré.');
         }
-    },
+        // Si l'extraction de l'id foire, on arrête la fonction
+        // plutôt que de faire crasher le bot
+        if (id.length != 11) return false;
 
-    rk: function(c, params, from, room) {
-        if (!this.isRanked(from, '#')) return false;
-        this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
-        this.talk(c, room, '/roomunban ' + ', ' + params);
-    },
-
-    vdm: function(c, params, from, room) {
-        if (!this.isRanked(from, '+')) return false;
-        //y a ma clé API VDM, vous avez vu comment je suis gentil ?
-        var self = this;
         var reqOpts = {
-            hostname: "api.fmylife.com",
+            hostname: "gdata.youtube.com",
             method: "GET",
-            path: '/view/random/sexe?language=fr&key=5395d4752b0a9'
+            path: '/feeds/api/videos/' + id + '?alt=json',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         };
+        var self = this;
         var data = '';
+
         var req = require('http').request(reqOpts, function(res) {
             res.on('data', function(chunk) {
                 data += chunk;
             });
             res.on('end', function(chunk) {
-                parseString(data, function(err, result) {
-                    if (err) throw err;
-                    self.talk(c, room, result.root.items[0].item[0].text);
-                });
+                var obj = JSON.parse(data);
+                if (self.isRanked(from, '+')) from = from.substr(1);
+                self.talk(c, room, 'Video postée par ' + from + ': ' + '**' + obj.entry.title.$t + '**');
             });
         });
         req.end();
     },
+    isBanned: function(c, user, room) {
+        var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
 
-    repeat: function(c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
-    },
-
-    trad: function(c, params, from, room) {
-        var item = makeId(params);
-        if (!this.isRanked(from, '+')) room = '#' + from;
-        if (trad.nameToEn[item]) {
-            this.talk(c, room, 'Nom du pokemon en anglais: ' + trad.nameToEn[item]);
-        } else if (trad.nameToFr[item]) {
-            this.talk(c, room, 'Nom du pokemon en français: ' + trad.nameToFr[item]);
-        } else if (trad.moveToEn[item]) {
-            this.talk(c, room, 'Nom de l\'attaque en anglais: ' + trad.moveToEn[item]);
-        } else if (trad.moveToFr[item]) {
-            this.talk(c, room, 'Nom de l\'attaque en français: ' + trad.moveToFr[item]);
-        } else if (trad.abilityToEn[item]) {
-            this.talk(c, room, 'Nom de la capacité spéciale en anglais: ' + trad.abilityToEn[item])
-        } else if (trad.abilityToFr[item]) {
-            this.talk(c, room, 'Nom de la capacité spéciale en français: ' + trad.abilityToFr[item])
-        } else {
-            this.talk(c, room, 'Rien n\'a été trouvé.')
+        for (var i = 0; i < banlist.length; i++) {
+            var spl = banlist[i].toString().split('|');
+            if (makeId(user) == spl[0] && room == spl[1]) {
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
+            }
         }
     },
-
-    '8ball': function(c, params, from, room) {
-        var phrases = fs.readFileSync('data/8ball.txt').toString().split("\n");
-        var random = Math.floor((Math.random() * phrases.length) + 1);
-
-        if (this.isRanked(from, '+')) {
-            this.talk(c, room, '(' + from.substr(1) + ') ' + phrases[random]);
-        } else {
-            this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
+    bannedwords: function(c, msg, user, room) {
+        var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
+        for (var i = 0; i < bannedwords.length; i++) {
+            var spl = bannedwords[i].toString().split('|');
+            if (!spl) return false;
+            var index = msg.indexOf(spl[0]);
+            if (index > -1 && room == spl[1]) {
+                console.log('DEBUG: ' + spl[0] + ' est un mot banni.');
+                this.talk(c, room, '/mute ' + user + ', Mot banni.');
+            }
         }
     },
-    fagtest: function(c, params, from, room) {
-        if (!this.isRanked(from, '%')) return false;
-        this.talk(c, room, 'PATA...');
-        this.talk(c, room, 'PON!');
-        this.timestamp1 = Date.now();
+    lagtest: function(c, room) {
+        //console.log('lancement de lagtest')
+        console.log(this.timestamp1);
+        console.log(this.timestamp2);
+        if (this.timestamp2 != null && this.timestamp2 != null) {
+            var lag1 = this.timestamp2 - this.timestamp1;
+            var lag2 = this.timestamp3 - this.timestamp1;
+            var lag = lag2 - lag1;
+            this.talk(c, room, 'Lag test: ' + Math.round(lag) + ' ms.');
+            this.timestamp1 = null;
+            this.timestamp2 = null;
+            this.timestamp3 = null;
+        }
+    },
+    upToHastebin: function(c, from, room, data) {
+        var self = this;
+        var reqOpts = {
+            hostname: "hastebin.com",
+            method: "POST",
+            path: '/documents'
+        };
+
+        var req = require('http').request(reqOpts, function(res) {
+            res.on('data', function(chunk) {
+                self.talk(c, room, (room.charAt(0) === '#' ? "" : "/pm " + from + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+            });
+        });
+
+        req.write(data);
+        req.end();
     }
 };
