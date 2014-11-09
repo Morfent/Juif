@@ -4,7 +4,7 @@
  *  doivent se trouver ici.
  *  Doc:
  *  Pour une commande de type:
- *  /cmd param1, param2
+ *  /cmd params
  *  La variable params contient les paramètres
  *  de la commande, qui sont à parser comme on veut
  *  from: celui qui exécute la commande
@@ -32,10 +32,10 @@ exports.Cmd = {
         if (!this.isRanked(from, '@')) return false;
         var txt = 'Réponses automatiques ';
         if (params === 'on') {
-            autoR = true;
+            Conf.autoR = true;
             txt += 'activées.';
         } else if (params === 'off') {
-            autoR = false;
+            Conf.autoR = false;
             txt += 'désactivées.'
         } else {
             //Précaution
