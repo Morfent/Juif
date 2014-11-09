@@ -27,23 +27,6 @@ exports.Cmd = {
         }
     },
 
-
-    talk: function(c, params, from, room) {
-        if (!this.isRanked(from, '@')) return false;
-        var txt = 'Réponses automatiques ';
-        if (params === 'on') {
-            Conf.autoR = true;
-            txt += 'activées.';
-        } else if (params === 'off') {
-            Conf.autoR = false;
-            txt += 'désactivées.'
-        } else {
-            //Précaution
-            txt = 'Vous devez utiliser le paramètre "on" ou "off".'
-        }
-        this.talk(c, room, txt);
-    },
-
     /***********************************
      *       ☆ MODÉRATION ☆
      ***********************************/
@@ -264,5 +247,20 @@ exports.Cmd = {
         this.talk(c, room, 'PATA...');
         this.talk(c, room, 'PON!');
         this.timestamp1 = Date.now();
+    },
+    talk: function(c, params, from, room) {
+        if (!this.isRanked(from, '@')) return false;
+        var txt = 'Réponses automatiques ';
+        if (params === 'on') {
+            Conf.autoR = true;
+            txt += 'activées.';
+        } else if (params === 'off') {
+            Conf.autoR = false;
+            txt += 'désactivées.'
+        } else {
+            //Précaution
+            txt = 'Vous devez utiliser le paramètre "on" ou "off".'
+        }
+        this.talk(c, room, txt);
     }
 };
