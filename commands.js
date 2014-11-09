@@ -61,6 +61,7 @@ exports.Cmd = {
         var output = e.replace(/^\s*$[\n\r]{1,}/gm, '');
         fs.writeFileSync('data/banlist.txt', output);
         this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
+        this.talk(c, room, '/modnote Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
 
     aub: function(c, params, from, room) {
