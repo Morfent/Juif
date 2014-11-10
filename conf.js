@@ -7,7 +7,7 @@
  * server: adresse du serveur
  * port: port du serveur PS
  * rooms: rooms à rejoindre
- * comchar: caractère devant précer une commande
+ * comchar: caractère devant précéder une commande
  * wl: Personnes pouvant utiliser le bot (sans grade requis)
  *     Format: exports.wl = ['user1', 'user2', 'etc']
  * autoR: Réponses auto (true ou false)
