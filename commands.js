@@ -30,7 +30,7 @@ exports.Cmd = {
     /***********************************
      *       ☆ MODÉRATION ☆
      ***********************************/
-
+    autoban: 'ab',
     ab: function(c, params, from, room) {
         if (!this.isRanked(from, '@') || !params) return false;
         var opts = params.split(',');
@@ -46,7 +46,8 @@ exports.Cmd = {
         this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
         this.talk(c, room, '/modnote Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
-
+    unautoban: 'aub',
+    uab: 'aub',
     aub: function(c, params, from, room) {
         if (!this.isRanked(from, '#') || !params) return false;
 
@@ -72,7 +73,7 @@ exports.Cmd = {
         }
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
     },
-
+    bword: 'banword',
     banword: function(c, params, from, room) {
         if (!this.isRanked(from, '@') || !params) return false;
         fs.appendFile('data/bannedwords.txt', params + '|' + room + '\n', function(err) {
@@ -80,7 +81,7 @@ exports.Cmd = {
         });
         this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
     },
-
+    ubword: 'unbanword',
     unbanword: function(c, params, from, room) {
         if (!this.isRanked(from, '#') || !params) return false;
 
@@ -104,7 +105,9 @@ exports.Cmd = {
         }
         if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
     },
-
+    blacklist: 'bl',
+    johncena: 'bl',
+    jeffhardy: 'bl',
     bl: function(c, params, from, room) {
         if (!this.isRanked(from, '@')) return false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
@@ -115,7 +118,7 @@ exports.Cmd = {
         }
         this.upToHastebin(c, from, room, str);
     },
-
+    tempban: 'tb',
     tb: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
         var opts = params.split(',');
@@ -132,6 +135,7 @@ exports.Cmd = {
     /*******************************************
      *       ☆ FONCTIONNALITÉS DIVERSES ☆
      *******************************************/
+    ca: 'fc',
     fc: function(c, params, from, room) {
         var opts = params.split(',');
         var success = false;
@@ -191,7 +195,7 @@ exports.Cmd = {
             }
         }
     },
-
+    roomkick: 'rk',
     rk: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
         this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
@@ -225,7 +229,9 @@ exports.Cmd = {
     repeat: function(c, params, from, room) {
         this.talk(c, room, 'Cette commande est en cours de développement.');
     },
-
+    translate: 'trad',
+    traduction: 'trad',
+    tr: 'trad',
     trad: function(c, params, from, room) {
         var item = makeId(params);
         if (!this.isRanked(from, '+')) room = '#' + from;
@@ -256,7 +262,8 @@ exports.Cmd = {
             this.talk(c, room, '/pm ' + from + ', ' + phrases[random]);
         }
     },
-    fagtest: function(c, params, from, room) {
+    fagtest: 'lagtest',
+    lagtest: function(c, params, from, room) {
         if (!this.isRanked(from, '%')) return false;
         this.talk(c, room, 'PATA...');
         this.talk(c, room, 'PON!');
