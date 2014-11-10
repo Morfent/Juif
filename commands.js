@@ -237,7 +237,6 @@ exports.Cmd = {
         if (!this.isRanked(from, '@')) return false;
         var spl = params.split('::');
         if (!spl[0] || !spl[1] || !spl[2]) return false;
-        if (!isNaN(spl[2])) return false;
         var time = spl[2].replace(/\s/g, '')*60*1000;
         var id = spl[0].replace(/\s/g, '');
         var self = this;
