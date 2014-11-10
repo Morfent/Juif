@@ -195,7 +195,7 @@ exports.Cmd = {
     rk: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
         this.talk(c, room, '/rb ' + params + ', La team reocket s\'en va vers d\'autres cieeeeeeeux !');
-        this.talk(c, room, '/roomunban ' + ', ' + params);
+        this.talk(c, room, '/roomunban ' + params);
     },
 
     vdm: function(c, params, from, room) {
