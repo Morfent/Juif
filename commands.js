@@ -53,15 +53,15 @@ exports.Cmd = {
 
         var success = false;
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
-        var editedbanlist = fs.readFileSync('data/banlist.txt').toString();
+        var temp = fs.readFileSync('data/banlist.txt').toString();
 
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(params) == spl[0]) {
                 var search = spl[0] + '|' + spl[1] + '|' + spl[2];
-                var idx = editedbanlist.indexOf(search);
+                var idx = temp.indexOf(search);
                 if (idx >= 0) {
-                    var output = editedbanlist.substr(0, idx) + editedbanlist.substr(idx + search.length);
+                    var output = temp.substr(0, idx) + temp.substr(idx + search.length);
                     //On tej la ligne vide inutile qui fait planter le script
                     var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/banlist.txt', output);
@@ -87,15 +87,15 @@ exports.Cmd = {
 
         var success = false;
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
-        var editedBannedWords = fs.readFileSync('data/bannedwords.txt').toString();
+        var temp = fs.readFileSync('data/bannedwords.txt').toString();
 
         for (var i = 0; i < bannedwords.length; i++) {
             var spl = bannedwords[i].toString().split('|');
             if (makeId(params) == spl[0] && spl[1] == room) {
                 var search = spl[0] + '|' + spl[1];
-                var idx = editedBannedWords.indexOf(search);
+                var idx = temp.indexOf(search);
                 if (idx >= 0) {
-                    var output = editedBannedWords.substr(0, idx) + editedBannedWords.substr(idx + search.length);
+                    var output = temp.substr(0, idx) + temp.substr(idx + search.length);
                     var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/bannedwords.txt', output);
                     this.talk(c, room, 'Le mot "' + spl[0] + '" a bien été débanni de la room' + spl[1] + '.');
