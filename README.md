@@ -65,7 +65,6 @@ Le nom du bot n'a en aucun cas une connotation raciste.
 TODO list
 =========
 
-`!repeat` : Répéter un message à intervalles réguliers <br/>
 `!bs` : bescherelle des mongols <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
 `this.checklink()` : liens de replays interdits (warn = désactivation du lien) 
