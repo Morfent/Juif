@@ -234,17 +234,23 @@ exports.Cmd = {
 
     repeter: 'repeat',
     repeat: function(c, params, from, room) {
+        if (!this.isRanked(from, '@')) return false;
         spl = params.split('::');
         if (!spl[0] || !spl[1] || !spl[2]) return false;
         var time = spl[2].replace(/\s/g, '')*60*1000;
-        this['t' + spl[0].replace(/\s/g, '')] = this.repeat(c, spl[1], time, room);
+        var id = spl[0].replace(/\s/g, '');
+        var self = this;
+        this.repeat(c, spl[1], time, room, 'timer' + id);
+        console.log(this);
+        this.talk(c, room, 'Repeat lancé avec l\'id "' + id + '". Intervalle: ' + spl[2] + ' minutes.');
     },
 
     stoprepeat: function(c, params, from, room) {
+        if (!this.isRanked(from, '@')) return false;
         if (!params) return false;
-        if (!this['t' + params]) return false;
-        delete this['t' + params];
-        this.talk(c, room, 'Le timer "' + params + '" a bien été arrêté.');
+        var id = 'timer' + params;
+        clearInterval(this[id]);
+        this.talk(c, room, 'Le repeat "' + params + '" a bien été arrêté.');
     },
 
     translate: 'trad',
