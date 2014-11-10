@@ -51,7 +51,7 @@ Symbole ✗: La commande n'est pas encore prête.<br/>
 ✗ !**repeat slot1 :: message :: durée** - Répéter un message à intervalles réguliers<br/>
 ✓ !**trad pokemon/attaque/cap spé** - Traduction FR -> EN et EN -> FR (détection automatique)<br/>
 ✓ !**8ball question** - 8ball<br/>
-✓ !**fagtest** - Tester le lag (mesure du temps entre 2 messages postés)<br/>
+✓ !**lagtest** - Tester le lag (mesure du temps entre 2 messages postés)<br/>
 
 Informations complémentaires
 =============================
