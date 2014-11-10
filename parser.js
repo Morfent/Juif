@@ -76,6 +76,7 @@ exports.Parser = {
                 break;
         }
     },
+
     //Message ou commande ?
     iscommand: function(c, msg, from, room) {
         if (msg.substr(0, Conf.comchar.length) === Conf.comchar) {
@@ -94,11 +95,11 @@ exports.Parser = {
             if (typeof Cmd[command] === 'string') {
                 var cmd = Cmd[command];
                 Cmd[cmd].call(this, c, params, from, room);
-                console.log(typeof Cmd[cmd]);
             }
             if (typeof Cmd[command] === 'function') Cmd[command].call(this, c, params, from, room);
         }
     },
+
     talk: function(c, room, msg) {
         if (room.charAt(0) == '#') {
             var to = room.substr(1);
@@ -109,6 +110,7 @@ exports.Parser = {
             send_datas(c, txt);
         }
     },
+
     isRanked: function(user, required) {
         var groups = {
             '~': {
@@ -150,6 +152,7 @@ exports.Parser = {
             return false;
         }
     },
+
     autoresponses: function(c, msg, from, room) {
         /*
          * Créer une instance de réponse aléatoire:
@@ -182,6 +185,7 @@ exports.Parser = {
             if (p == 1) this.talk(c, room, phrases[random] + ' ' + from);
         }
     },
+
     checkYtlink: function(c, msg, from, room) {
         var spl = msg.split(' ');
         var id = null;
@@ -224,6 +228,7 @@ exports.Parser = {
         });
         req.end();
     },
+
     isBanned: function(c, user, room) {
         var banlist = fs.readFileSync('data/banlist.txt').toString().split('\n');
 
@@ -234,6 +239,7 @@ exports.Parser = {
             }
         }
     },
+
     bannedwords: function(c, msg, user, room) {
         var bannedwords = fs.readFileSync('data/bannedwords.txt').toString().split('\n');
         for (var i = 0; i < bannedwords.length; i++) {
@@ -246,6 +252,7 @@ exports.Parser = {
             }
         }
     },
+
     lagtest: function(c, room) {
         //console.log('lancement de lagtest')
         console.log(this.timestamp1);
@@ -260,6 +267,14 @@ exports.Parser = {
             this.timestamp3 = null;
         }
     },
+
+    repeat: function (c, msg, time, room) {
+        var self = this;
+        setInterval(function() {
+            self.talk(c, room, msg);
+        }, time);
+    },
+
     upToHastebin: function(c, from, room, data) {
         var self = this;
         var reqOpts = {
