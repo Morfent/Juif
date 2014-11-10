@@ -268,9 +268,9 @@ exports.Parser = {
         }
     },
 
-    repeat: function (c, msg, time, room) {
+    repeat: function (c, msg, time, room, id) {
         var self = this;
-        setInterval(function() {
+        this[id] = setInterval(function() {
             self.talk(c, room, msg);
         }, time);
     },
