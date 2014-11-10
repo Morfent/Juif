@@ -90,7 +90,12 @@ exports.Parser = {
             } else {
                 command = msg;
             }
-            //La condition retourne 0 si la commande n'existe pas
+
+            if (typeof Cmd[command] === 'string') {
+                var cmd = Cmd[command];
+                Cmd[cmd].call(this, c, params, from, room);
+                console.log(typeof Cmd[cmd]);
+            }
             if (typeof Cmd[command] === 'function') Cmd[command].call(this, c, params, from, room);
         }
     },
