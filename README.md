@@ -48,7 +48,8 @@ Symbole ✗: La commande n'est pas encore prête.<br/>
 ✓ !**fc add, code ami** - Permet à un utilisateur d'enregistrer/remplacer son CA dans la base de données du bot<br/>
 ✓ !**fc user** - Permet d'afficher le code ami d'un utilisateur enregistré dans la base de données du bot<br/>
 ✓ !**vdm** - Le bot poste une VDM<br/>
-☑ !**repeat ID :: message :: durée (en min)** - Répéter un message à intervalles réguliers<br/>
+✓ !**repeat ID :: message :: durée (en min)** - Répéter un message à intervalles réguliers<br/>
+✓ !**stoprepeat ID** - Arrêter un !repeat<br/>
 ✓ !**trad pokemon/attaque/cap spé** - Traduction FR -> EN et EN -> FR (détection automatique)<br/>
 ✓ !**8ball question** - 8ball<br/>
 ✓ !**lagtest** - Tester le lag (mesure du temps entre 2 messages postés)<br/>
