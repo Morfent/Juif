@@ -46,6 +46,7 @@ exports.Cmd = {
         this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
         this.talk(c, room, '/modnote Ban permanant pour ' + opts[0] + ': ' + opts[1]);
     },
+
     unautoban: 'aub',
     uab: 'aub',
     aub: function(c, params, from, room) {
@@ -73,6 +74,7 @@ exports.Cmd = {
         }
         if (success == false) this.talk(c, room, params + ' n\'est pas banni.');
     },
+
     bword: 'banword',
     banword: function(c, params, from, room) {
         if (!this.isRanked(from, '@') || !params) return false;
@@ -81,6 +83,7 @@ exports.Cmd = {
         });
         this.talk(c, room, 'Le mot "' + params + '" a bien été banni de la room ' + room + '.');
     },
+
     ubword: 'unbanword',
     unbanword: function(c, params, from, room) {
         if (!this.isRanked(from, '#') || !params) return false;
@@ -96,7 +99,7 @@ exports.Cmd = {
                 var idx = temp.indexOf(search);
                 if (idx >= 0) {
                     var output = temp.substr(0, idx) + temp.substr(idx + search.length);
-                    var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
+                    output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/bannedwords.txt', output);
                     this.talk(c, room, 'Le mot "' + spl[0] + '" a bien été débanni de la room' + spl[1] + '.');
                     success = true;
@@ -105,6 +108,7 @@ exports.Cmd = {
         }
         if (success == false) this.talk(c, room, 'Le mot "' + params + '" n\'est pas banni.');
     },
+
     blacklist: 'bl',
     johncena: 'bl',
     jeffhardy: 'bl',
@@ -118,6 +122,7 @@ exports.Cmd = {
         }
         this.upToHastebin(c, from, room, str);
     },
+
     tempban: 'tb',
     tb: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
@@ -195,6 +200,7 @@ exports.Cmd = {
             }
         }
     },
+
     roomkick: 'rk',
     rk: function(c, params, from, room) {
         if (!this.isRanked(from, '#')) return false;
@@ -226,9 +232,21 @@ exports.Cmd = {
         req.end();
     },
 
+    repeter: 'repeat',
     repeat: function(c, params, from, room) {
-        this.talk(c, room, 'Cette commande est en cours de développement.');
+        spl = params.split('::');
+        if (!spl[0] || !spl[1] || !spl[2]) return false;
+        var time = spl[2].replace(/\s/g, '')*60*1000;
+        this['t' + spl[0].replace(/\s/g, '')] = this.repeat(c, spl[1], time, room);
     },
+
+    stoprepeat: function(c, params, from, room) {
+        if (!params) return false;
+        if (!this['t' + params]) return false;
+        delete this['t' + params];
+        this.talk(c, room, 'Le timer "' + params + '" a bien été arrêté.');
+    },
+
     translate: 'trad',
     traduction: 'trad',
     tr: 'trad',
@@ -265,10 +283,11 @@ exports.Cmd = {
     fagtest: 'lagtest',
     lagtest: function(c, params, from, room) {
         if (!this.isRanked(from, '%')) return false;
+        this.timestamp1 = Date.now();
         this.talk(c, room, 'PATA...');
         this.talk(c, room, 'PON!');
-        this.timestamp1 = Date.now();
     },
+
     talk: function(c, params, from, room) {
         if (!this.isRanked(from, '@')) return false;
         var txt = 'Réponses automatiques ';
