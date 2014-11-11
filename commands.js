@@ -140,6 +140,13 @@ exports.Cmd = {
     /*******************************************
      *       ☆ FONCTIONNALITÉS DIVERSES ☆
      *******************************************/
+    juif: function(c, params, from, room) {
+        if (!this.isRanked(from, '+')) {
+            this.talk(c, room, 'Liste des commandes de juif: https://github.com/Kebabier/Juif#documentation');
+        } else {
+            this.talk(c, room, '/pm ' + from + ', Liste des commandes de juif: https://github.com/Kebabier/Juif#documentation');
+        }
+    },
     ca: 'fc',
     fc: function(c, params, from, room) {
         var opts = params.split(',');
