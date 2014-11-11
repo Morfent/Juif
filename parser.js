@@ -166,22 +166,22 @@ exports.Parser = {
          *     this.talk(c, room, phrases[random]);
          */
         if (!Conf.autoR) return false;
-        if (msg.indexOf(botName) > -1) {
+        if (msg.indexOf(botName.toLowerCase()) > -1) {
             var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
             var random = Math.floor((Math.random() * phrases.length) + 1);
+            if (this.isRanked(from, '+')) from = from.substr(1);
             //Probabilité de 1/3 pour une réponse
-            var z = Math.floor((Math.random() * 3 + 1));
-            if (z == 1) this.talk(c, room, phrases[random] + ' ' + from);
-            this.talk(c, room, phrases[random]);
+            var z = Math.floor((Math.random() * 2 + 1));
+            if (z == 1) this.talk(c, room, phrases[random]);
         }
         //Salutations
         var words = ['hi', 'salut', 'bonjour', 'yo', 'slt'];
         if (words.indexOf(msg) > -1) {
             var phrases = fs.readFileSync('data/autohello.txt').toString().split("\n");
-            var random = Math.floor((Math.random() * phrases.length) + 1);
+            var random = Math.floor((Math.random() * phrases.length) - 1);
             //Si l'utilisateur a un grade, on l'enlève du nom
             if (this.isRanked(from, '+')) from = from.substr(1);
-            var p = Math.floor((Math.random() * 3 + 1));
+            var p = Math.floor((Math.random() * 2 + 1));
             if (p == 1) this.talk(c, room, phrases[random] + ' ' + from);
         }
     },
