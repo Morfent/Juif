@@ -178,7 +178,7 @@ exports.Parser = {
         var words = ['hi', 'salut', 'bonjour', 'yo', 'slt'];
         if (words.indexOf(msg) > -1) {
             var phrases = fs.readFileSync('data/autohello.txt').toString().split("\n");
-            var random = Math.floor((Math.random() * phrases.length) - 1);
+            var random = Math.floor((Math.random() * phrases.length) + 1);
             //Si l'utilisateur a un grade, on l'enlève du nom
             if (this.isRanked(from, '+')) from = from.substr(1);
             var p = Math.floor((Math.random() * 2 + 1));
