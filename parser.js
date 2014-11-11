@@ -170,8 +170,8 @@ exports.Parser = {
             var phrases = fs.readFileSync('data/autores.txt').toString().split("\n");
             var random = Math.floor((Math.random() * phrases.length) + 1);
             //Probabilité de 1/3 pour une réponse
-            var c = Math.floor((Math.random() * 3 + 1));
-            if (c == 1) this.talk(c, room, phrases[random] + ' ' + from);
+            var z = Math.floor((Math.random() * 3 + 1));
+            if (z == 1) this.talk(c, room, phrases[random] + ' ' + from);
             this.talk(c, room, phrases[random]);
         }
         //Salutations
