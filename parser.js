@@ -71,7 +71,7 @@ exports.Parser = {
                 }
                 break;
             case 'J':
-                //Bannissement permanant (expérimental)
+                //Bannissement permanent (expérimental)
                 this.isBanned(c, t[2], this.room);
                 break;
         }
@@ -235,7 +235,7 @@ exports.Parser = {
         for (var i = 0; i < banlist.length; i++) {
             var spl = banlist[i].toString().split('|');
             if (makeId(user) == spl[0] && room == spl[1]) {
-                this.talk(c, room, '/rb ' + user + ', Bannissement permanant: ' + spl[2]);
+                this.talk(c, room, '/rb ' + user + ', Bannissement permanent: ' + spl[2]);
             }
         }
     },
