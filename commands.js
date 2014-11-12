@@ -43,8 +43,8 @@ exports.Cmd = {
         var e = fs.readFileSync('data/banlist.txt').toString();
         var output = e.replace(/^\s*$[\n\r]{1,}/gm, '');
         fs.writeFileSync('data/banlist.txt', output);
-        this.talk(c, room, '/rb ' + opts[0] + ', Ban permanant pour ' + opts[0] + ': ' + opts[1]);
-        this.talk(c, room, '/modnote Ban permanant pour ' + opts[0] + ': ' + opts[1]);
+        this.talk(c, room, '/rb ' + opts[0] + ', Ban permanent pour ' + opts[0] + ': ' + opts[1]);
+        this.talk(c, room, '/modnote Ban permanent pour ' + opts[0] + ': ' + opts[1]);
     },
 
     unautoban: 'aub',
@@ -64,7 +64,7 @@ exports.Cmd = {
                 if (idx >= 0) {
                     var output = temp.substr(0, idx) + temp.substr(idx + search.length);
                     //On tej la ligne vide inutile qui fait planter le script
-                    var output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
+                    output = output.replace(/^\s*$[\n\r]{1,}/gm, '');
                     fs.writeFileSync('data/banlist.txt', output);
                     this.talk(c, room, '/roomunban ' + spl[0]);
                     this.talk(c, room, spl[0] + ' a bien été débanni.');
