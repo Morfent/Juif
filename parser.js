@@ -75,6 +75,16 @@ exports.Parser = {
                 this.isBanned(c, t[2], this.room);
                 break;
         }
+        ///////Battling API//////
+        if (typeof Battling[t[1]] === 'function') {
+            var data = t[2];
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                //ce n'est pas un json valide.
+            }
+            Battling[t[1]].call(this, c, this.room, data);
+        }
     },
 
     //Message ou commande ?
@@ -268,7 +278,7 @@ exports.Parser = {
         }
     },
 
-    repeat: function (c, msg, time, room, id) {
+    repeat: function(c, msg, time, room, id) {
         var self = this;
         this[id] = setInterval(function() {
             self.talk(c, room, msg);
