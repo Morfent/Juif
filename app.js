@@ -8,11 +8,15 @@ var wsclient = require('websocket').client,
 
 global.Parser = require('./parser.js').Parser;
 global.Cmd = require('./commands.js').Cmd;
+global.Battling = require('./battle.js').Battling;
 global.Conf = require('./conf.js');
 
 //On précharge les données une bonne fois pour toute
 global.trad = require('./data/trad/pokemondatas.js');
+global.moves = require('./data/moves.js').BattleMovedex;
+global.dex = require('./data/dex.js').BattlePokedex;
 
+//Servira pour envoyer des messages (this.talk();)
 global.send_datas = function(conn, d) {
     if (conn.connected) {
         d = JSON.stringify(d);
