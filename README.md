@@ -67,6 +67,6 @@ TODO list
 
 `!bs` : bescherelle des mongols <br/>
 `this.logpm()` : enregistrement des PMS reçus <br/>
-`this.checklink()` : liens de replays interdits (warn = désactivation du lien) 
+`this.checklink()` : liens de replays interdits (warn = désactivation du lien) <br/><br/>
 Correction d'un bug sur les salutations auto: 
 Le bot répond [pseudo] au lieu de Salut [pseudo]
